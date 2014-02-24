@@ -212,9 +212,10 @@ static struct pm8xxx_gpio_init pm8921_keypad_gpios[] = {
 /* pm8921 GPIO configuration for APQ8064 keypad */
 static struct pm8xxx_gpio_init pm8921_keypad_gpios_apq[] = {
 	/* keys GPIOs */
-	PM8XXX_GPIO_INPUT(PM_GPIO(35), PM_GPIO_PULL_UP_31_5),
-	PM8XXX_GPIO_INPUT(PM_GPIO(38), PM_GPIO_PULL_UP_31_5),
+	PM8XXX_GPIO_INPUT(PM_GPIO(1), PM_GPIO_PULL_UP_31_5),
+	PM8XXX_GPIO_INPUT(PM_GPIO(2), PM_GPIO_PULL_UP_31_5),
 	PM8XXX_GPIO_OUTPUT(PM_GPIO(9), 0),
+	PM8XXX_GPIO_OUTPUT(PM_GPIO(10), 0),
 };
 
 /* pm8917 GPIO configuration for APQ8064 keypad */
