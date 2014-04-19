@@ -76,6 +76,9 @@ extern int get_target_boot_params(const char *cmdline, const char *part,
 
 void write_device_info_mmc(device_info *dev);
 void write_device_info_flash(device_info *dev);
+#if _DUALBOOT_ENABLED
+int read_dualboot_info_mmc(char *bootmode);
+#endif
 
 #define EXPAND(NAME) #NAME
 #define TARGET(NAME) EXPAND(NAME)
@@ -116,6 +119,9 @@ static const char *loglevel         = " quiet";
 static const char *battchg_pause = " androidboot.mode=charger";
 static const char *auth_kernel = " androidboot.authorized_kernel=true";
 static const char *secondary_gpt_enable = " gpt";
+#if _DUALBOOT_ENABLED
+static const char *syspart = " syspart=";
+#endif
 
 static const char *baseband_apq     = " androidboot.baseband=apq";
 static const char *baseband_msm     = " androidboot.baseband=msm";
@@ -263,6 +269,16 @@ unsigned char *update_cmdline(const char * cmdline)
 	cmdline_len += strlen(usb_sn_cmdline);
 	cmdline_len += strlen(sn_buf);
 
+#if _DUALBOOT_ENABLED
+	char* syspart_value = (char*)malloc(16*sizeof(char));
+	if(read_dualboot_info_mmc(syspart_value)) {
+		dprintf(CRITICAL,"ERROR: Error in read_dualboot_info_mmc!");
+		ASSERT(0);
+	}
+	cmdline_len += strlen(syspart);
+	cmdline_len += strlen(syspart_value);
+#endif
+
 	if (boot_into_recovery && gpt_exists)
 		cmdline_len += strlen(secondary_gpt_enable);
 
@@ -374,6 +390,16 @@ unsigned char *update_cmdline(const char * cmdline)
 		if (have_cmdline) --dst;
 		have_cmdline = 1;
 		while ((*dst++ = *src++));
+
+#if _DUALBOOT_ENABLED
+		src = syspart;
+		if (have_cmdline) --dst;
+		while ((*dst++ = *src++));
+		src = syspart_value;
+		if (have_cmdline) --dst;
+		while ((*dst++ = *src++));
+#endif
+
 		if (warm_boot) {
 			if (have_cmdline) --dst;
 			src = warmboot_cmdline;
@@ -1509,6 +1535,36 @@ void read_device_info(device_info *dev)
 		read_device_info_flash(dev);
 	}
 }
+
+#if _DUALBOOT_ENABLED
+int read_dualboot_info_mmc(char *bootmode)
+{
+	char *ptn_name = "misc";
+	unsigned long long ptn = 0;
+	unsigned int size = ROUND_TO_PAGE(sizeof(*bootmode)*16,511);
+	unsigned char data[size];
+	int index = INVALID_PTN;
+
+	index = partition_get_index((unsigned char *) ptn_name);
+	ptn = partition_get_offset(index);
+	if(ptn == 0) {
+		dprintf(CRITICAL,"partition %s doesn't exist\n",ptn_name);
+		return -1;
+	}
+	if (mmc_read(ptn +0x1000, (unsigned int*)data, size)) {
+		dprintf(CRITICAL,"mmc read failure %s %d\n",ptn_name, size);
+		return -1;
+	}
+
+	if(strcmp(data, "boot-system1")==0)
+		strncpy(data, "system1", 16);
+	else
+		strncpy(data, "system", 16);
+
+	memcpy(bootmode, data, sizeof(*bootmode)*16);
+	return 0;
+}
+#endif
 
 void reset_device_info()
 {
