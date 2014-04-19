@@ -74,6 +74,10 @@ static void target_uart_init(void);
 void target_early_init(void)
 {
 #if WITH_DEBUG_UART
+	// enable uart switch
+	gpio_tlmm_config(62, 0, GPIO_OUTPUT, GPIO_PULL_UP, GPIO_8MA, GPIO_ENABLE);
+	gpio_set(62, 2);
+
 	target_uart_init();
 #endif
 }
