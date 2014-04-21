@@ -1,0 +1,15 @@
+CPIO_LOCAL_PATH := $(GET_LOCAL_DIR)
+
+CPIO_SRCS = \
+	cpio.c
+
+
+CPIO_OBJS = $(CPIO_SRCS:%.c=%.o)
+
+INCLUDES += \
+	-I$(CPIO_LOCAL_PATH)/src \
+	-I$(CPIO_LOCAL_PATH)
+
+OBJS += $(addprefix $(CPIO_LOCAL_PATH)/, $(CPIO_OBJS))
+
+
