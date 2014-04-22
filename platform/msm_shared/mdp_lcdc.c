@@ -55,11 +55,11 @@ int mdp_lcdc_config(struct msm_panel_info *pinfo,
 	struct lcdc_panel_info *lcdc = NULL;
 
 	if (pinfo == NULL)
-		return;
+		return ERR_INVALID_ARGS;
 
 	lcdc =  &(pinfo->lcdc);
 	if (lcdc == NULL)
-		return;
+		return ERR_INVALID_ARGS;
 
 	mdp_rev = mdp_get_revision();
 

@@ -306,7 +306,7 @@ int udc_request_queue(struct udc_endpoint *ept, struct udc_request *_req)
 					ROUNDUP(sizeof(struct ept_queue_item), CACHE_LINE));
 			if (!item) {
 				dprintf(ALWAYS, "allocate USB item fail ept%d"
-							"%s queue\n",
+							"%s queue\n"
 							"td count = %d\n",
 							ept->num,
 							ept->in ? "in" : "out",
@@ -424,8 +424,8 @@ static void handle_ept_complete(struct udc_endpoint *ept)
 				/*
 				 * Record the data transferred for the last TD
 				 */
-				actual += total_len - (item->info >> 16)
-								& 0x7FFF;
+				actual += total_len - ((item->info >> 16)
+								& 0x7FFF);
 				total_len = 0;
 				break;
 			} else {
@@ -435,8 +435,8 @@ static void handle_ept_complete(struct udc_endpoint *ept)
 				 * TD woulb the max possible TD transfer size
 				 * (16K)
 				 */
-				actual += MAX_TD_XFER_SIZE - (item->info >> 16) & 0x7FFF;
-				total_len -= MAX_TD_XFER_SIZE - (item->info >> 16) & 0x7FFF;
+				actual += MAX_TD_XFER_SIZE - ((item->info >> 16) & 0x7FFF);
+				total_len -= MAX_TD_XFER_SIZE - ((item->info >> 16) & 0x7FFF);
 				/*Move to next item in chain*/
 				item = VA(item->next);
 			}

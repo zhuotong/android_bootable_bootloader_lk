@@ -2737,6 +2737,8 @@ mmc_wp(unsigned int sector, unsigned int size, unsigned char set_clear_wp)
 			dprintf(CRITICAL, "Failure in getting wp_status (%u)%s:%u\n", rc, __FILE__, __LINE__);
 			return rc;
 		}
+
+		return rc;
 	}
 	else
 		return MMC_BOOT_E_FAILURE;
@@ -3016,7 +3018,7 @@ static unsigned int mmc_boot_send_erase(struct mmc_card *card)
 	/* Checking for write protect */
 	if (cmd.resp[0] & MMC_BOOT_R1_WP_ERASE_SKIP) {
 		dprintf(CRITICAL, "Write protect enabled for sector \n");
-		return;
+		return MMC_BOOT_E_FAILURE;
 	}
 
 	/* Checking if the erase operation for the card is compelete */

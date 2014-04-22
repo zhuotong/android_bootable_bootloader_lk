@@ -2358,7 +2358,7 @@ struct fbimage* splash_screen_mmc()
 				base += LOGO_IMG_OFFSET;
 
 		if (mmc_read(ptn + sizeof(logo->header),
-			base,
+			(unsigned int*)base,
 			((((logo->header.width * logo->header.height * fb_display->bpp/8) + 511) >> 9) << 9))) {
 			fbcon_clear();
 			dprintf(CRITICAL, "ERROR: Cannot read splash image\n");
@@ -2647,13 +2647,13 @@ int aboot_save_boot_hash_mmc(void *kernel_addr, unsigned kernel_actual,
 	SHA256_Init(&sha256_ctx);
 
 	/* Read Boot Header */
-	if (mmc_read(ptn, buf, page_size))
+	if (mmc_read(ptn, (unsigned int*)buf, page_size))
 	{
 		dprintf(CRITICAL, "ERROR: mmc_read() fail.\n");
 		return -1;
 	}
 	/* Read entire Device Tree */
-	if (mmc_read(ptn + dt_offset, buf+page_size, dt_actual))
+	if (mmc_read(ptn + dt_offset, (unsigned int*)buf+page_size, dt_actual))
 	{
 		dprintf(CRITICAL, "ERROR: mmc_read() fail.\n");
 		return -1;

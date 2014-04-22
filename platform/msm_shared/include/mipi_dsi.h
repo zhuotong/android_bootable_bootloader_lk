@@ -644,7 +644,7 @@ struct mdss_dsi_phy_ctrl {
 	char laneCfg[45];
 };
 
-typedef struct mdss_dsi_pll_config {
+struct mdss_dsi_pll_config {
 	uint32_t  pixel_clock;
 	uint32_t  pixel_clock_mhz;
 	uint32_t  byte_clock;
@@ -680,30 +680,30 @@ struct mipi_dsi_panel_config {
 };
 
 static struct mipi_dsi_cmd toshiba_panel_video_mode_cmds[] = {
-	{sizeof(toshiba_panel_mcap_off), (char *)toshiba_panel_mcap_off},
+	{sizeof(toshiba_panel_mcap_off), (char *)toshiba_panel_mcap_off, 0},
 	{sizeof(toshiba_panel_ena_test_reg),
-	 (char *)toshiba_panel_ena_test_reg},
+	 (char *)toshiba_panel_ena_test_reg, 0},
 	{sizeof(toshiba_panel_num_of_1lane),
-	 (char *)toshiba_panel_num_of_1lane},
+	 (char *)toshiba_panel_num_of_1lane, 0},
 	{sizeof(toshiba_panel_non_burst_sync_pulse),
-	 (char *)toshiba_panel_non_burst_sync_pulse},
+	 (char *)toshiba_panel_non_burst_sync_pulse, 0},
 	{sizeof(toshiba_panel_set_DMODE_WVGA),
-	 (char *)toshiba_panel_set_DMODE_WVGA},
+	 (char *)toshiba_panel_set_DMODE_WVGA, 0},
 	{sizeof(toshiba_panel_set_intern_WR_clk1_wvga),
-	 (char *)toshiba_panel_set_intern_WR_clk1_wvga},
+	 (char *)toshiba_panel_set_intern_WR_clk1_wvga, 0},
 	{sizeof(toshiba_panel_set_intern_WR_clk2_wvga),
-	 (char *)toshiba_panel_set_intern_WR_clk2_wvga},
+	 (char *)toshiba_panel_set_intern_WR_clk2_wvga, 0},
 	{sizeof(toshiba_panel_set_hor_addr_2A_wvga),
-	 (char *)toshiba_panel_set_hor_addr_2A_wvga},
+	 (char *)toshiba_panel_set_hor_addr_2A_wvga, 0},
 	{sizeof(toshiba_panel_set_hor_addr_2B_wvga),
-	 (char *)toshiba_panel_set_hor_addr_2B_wvga},
-	{sizeof(toshiba_panel_IFSEL), (char *)toshiba_panel_IFSEL},
-	{sizeof(toshiba_panel_exit_sleep), (char *)toshiba_panel_exit_sleep},
-	{sizeof(toshiba_panel_display_on), (char *)toshiba_panel_display_on},
+	 (char *)toshiba_panel_set_hor_addr_2B_wvga, 0},
+	{sizeof(toshiba_panel_IFSEL), (char *)toshiba_panel_IFSEL, 0},
+	{sizeof(toshiba_panel_exit_sleep), (char *)toshiba_panel_exit_sleep, 0},
+	{sizeof(toshiba_panel_display_on), (char *)toshiba_panel_display_on, 0},
 	{sizeof(dsi_display_config_color_mode_on),
-	 (char *)dsi_display_config_color_mode_on},
+	 (char *)dsi_display_config_color_mode_on, 0},
 	{sizeof(dsi_display_config_color_mode_off),
-	 (char *)dsi_display_config_color_mode_off},
+	 (char *)dsi_display_config_color_mode_off, 0},
 };
 
 static struct mipi_dsi_phy_ctrl mipi_dsi_toshiba_panel_phy_ctrl = {
@@ -736,112 +736,112 @@ static struct mipi_dsi_phy_ctrl mipi_dsi_toshiba_panel_phy_ctrl = {
 };
 
 static struct mipi_dsi_cmd toshiba_mdt61_video_mode_cmds[] = {
-	{sizeof(toshiba_mdt61_mcap_start), (char *)toshiba_mdt61_mcap_start},
+	{sizeof(toshiba_mdt61_mcap_start), (char *)toshiba_mdt61_mcap_start, 0},
 	{sizeof(toshiba_mdt61_num_out_pixelform),
-	 (char *)toshiba_mdt61_num_out_pixelform},
-	{sizeof(toshiba_mdt61_dsi_ctrl), (char *)toshiba_mdt61_dsi_ctrl},
+	 (char *)toshiba_mdt61_num_out_pixelform, 0},
+	{sizeof(toshiba_mdt61_dsi_ctrl), (char *)toshiba_mdt61_dsi_ctrl, 0},
 	{sizeof(toshiba_mdt61_panel_driving),
-	 (char *)toshiba_mdt61_panel_driving},
+	 (char *)toshiba_mdt61_panel_driving, 0},
 	{sizeof(toshiba_mdt61_dispV_timing),
-	 (char *)toshiba_mdt61_dispV_timing},
-	{sizeof(toshiba_mdt61_dispCtrl), (char *)toshiba_mdt61_dispCtrl},
+	 (char *)toshiba_mdt61_dispV_timing, 0},
+	{sizeof(toshiba_mdt61_dispCtrl), (char *)toshiba_mdt61_dispCtrl, 0},
 	{sizeof(toshiba_mdt61_test_mode_c4),
-	 (char *)toshiba_mdt61_test_mode_c4},
+	 (char *)toshiba_mdt61_test_mode_c4, 0},
 	{sizeof(toshiba_mdt61_dispH_timing),
-	 (char *)toshiba_mdt61_dispH_timing},
+	 (char *)toshiba_mdt61_dispH_timing, 0},
 	{sizeof(toshiba_mdt61_test_mode_c6),
-	 (char *)toshiba_mdt61_test_mode_c6},
-	{sizeof(toshiba_mdt61_gamma_setA), (char *)toshiba_mdt61_gamma_setA},
-	{sizeof(toshiba_mdt61_gamma_setB), (char *)toshiba_mdt61_gamma_setB},
-	{sizeof(toshiba_mdt61_gamma_setC), (char *)toshiba_mdt61_gamma_setC},
+	 (char *)toshiba_mdt61_test_mode_c6, 0},
+	{sizeof(toshiba_mdt61_gamma_setA), (char *)toshiba_mdt61_gamma_setA, 0},
+	{sizeof(toshiba_mdt61_gamma_setB), (char *)toshiba_mdt61_gamma_setB, 0},
+	{sizeof(toshiba_mdt61_gamma_setC), (char *)toshiba_mdt61_gamma_setC, 0},
 	{sizeof(toshiba_mdt61_powerSet_ChrgPmp),
-	 (char *)toshiba_mdt61_powerSet_ChrgPmp},
-	{sizeof(toshiba_mdt61_testMode_d1), (char *)toshiba_mdt61_testMode_d1},
+	 (char *)toshiba_mdt61_powerSet_ChrgPmp, 0},
+	{sizeof(toshiba_mdt61_testMode_d1), (char *)toshiba_mdt61_testMode_d1, 0},
 	{sizeof(toshiba_mdt61_powerSet_SrcAmp),
-	 (char *)toshiba_mdt61_powerSet_SrcAmp},
-	{sizeof(toshiba_mdt61_powerInt_PS), (char *)toshiba_mdt61_powerInt_PS},
-	{sizeof(toshiba_mdt61_vreg), (char *)toshiba_mdt61_vreg},
+	 (char *)toshiba_mdt61_powerSet_SrcAmp, 0},
+	{sizeof(toshiba_mdt61_powerInt_PS), (char *)toshiba_mdt61_powerInt_PS, 0},
+	{sizeof(toshiba_mdt61_vreg), (char *)toshiba_mdt61_vreg, 0},
 	{sizeof(toshiba_mdt61_test_mode_d6),
-	 (char *)toshiba_mdt61_test_mode_d6},
+	 (char *)toshiba_mdt61_test_mode_d6, 0},
 	{sizeof(toshiba_mdt61_timingCtrl_d7),
-	 (char *)toshiba_mdt61_timingCtrl_d7},
+	 (char *)toshiba_mdt61_timingCtrl_d7, 0},
 	{sizeof(toshiba_mdt61_timingCtrl_d8),
-	 (char *)toshiba_mdt61_timingCtrl_d8},
+	 (char *)toshiba_mdt61_timingCtrl_d8, 0},
 	{sizeof(toshiba_mdt61_timingCtrl_d9),
-	 (char *)toshiba_mdt61_timingCtrl_d9},
+	 (char *)toshiba_mdt61_timingCtrl_d9, 0},
 	{sizeof(toshiba_mdt61_white_balance),
-	 (char *)toshiba_mdt61_white_balance},
+	 (char *)toshiba_mdt61_white_balance, 0},
 	{sizeof(toshiba_mdt61_vcs_settings),
-	 (char *)toshiba_mdt61_vcs_settings},
+	 (char *)toshiba_mdt61_vcs_settings, 0},
 	{sizeof(toshiba_mdt61_vcom_dc_settings),
-	 (char *)toshiba_mdt61_vcom_dc_settings},
-	{sizeof(toshiba_mdt61_testMode_e3), (char *)toshiba_mdt61_testMode_e3},
-	{sizeof(toshiba_mdt61_testMode_e4), (char *)toshiba_mdt61_testMode_e4},
-	{sizeof(toshiba_mdt61_testMode_e5), (char *)toshiba_mdt61_testMode_e5},
-	{sizeof(toshiba_mdt61_testMode_fa), (char *)toshiba_mdt61_testMode_fa},
-	{sizeof(toshiba_mdt61_testMode_fd), (char *)toshiba_mdt61_testMode_fd},
-	{sizeof(toshiba_mdt61_testMode_fe), (char *)toshiba_mdt61_testMode_fe},
-	{sizeof(toshiba_mdt61_mcap_end), (char *)toshiba_mdt61_mcap_end},
+	 (char *)toshiba_mdt61_vcom_dc_settings, 0},
+	{sizeof(toshiba_mdt61_testMode_e3), (char *)toshiba_mdt61_testMode_e3, 0},
+	{sizeof(toshiba_mdt61_testMode_e4), (char *)toshiba_mdt61_testMode_e4, 0},
+	{sizeof(toshiba_mdt61_testMode_e5), (char *)toshiba_mdt61_testMode_e5, 0},
+	{sizeof(toshiba_mdt61_testMode_fa), (char *)toshiba_mdt61_testMode_fa, 0},
+	{sizeof(toshiba_mdt61_testMode_fd), (char *)toshiba_mdt61_testMode_fd, 0},
+	{sizeof(toshiba_mdt61_testMode_fe), (char *)toshiba_mdt61_testMode_fe, 0},
+	{sizeof(toshiba_mdt61_mcap_end), (char *)toshiba_mdt61_mcap_end, 0},
 	{sizeof(toshiba_mdt61_set_add_mode),
-	 (char *)toshiba_mdt61_set_add_mode},
+	 (char *)toshiba_mdt61_set_add_mode, 0},
 	{sizeof(toshiba_mdt61_set_pixel_format),
-	 (char *)toshiba_mdt61_set_pixel_format},
-	{sizeof(dsi_display_exit_sleep), (char *)dsi_display_exit_sleep},
-	{sizeof(dsi_display_display_on), (char *)dsi_display_display_on},
+	 (char *)toshiba_mdt61_set_pixel_format, 0},
+	{sizeof(dsi_display_exit_sleep), (char *)dsi_display_exit_sleep, 0},
+	{sizeof(dsi_display_display_on), (char *)dsi_display_display_on, 0},
 };
 
 static struct mipi_dsi_cmd toshiba_mdv24_video_mode_cmds[] = {
-	{sizeof(toshiba_mdv24_mcap), (char *)toshiba_mdv24_mcap},
+	{sizeof(toshiba_mdv24_mcap), (char *)toshiba_mdv24_mcap, 0},
 	{sizeof(toshiba_mdv24_acr),
-	 (char *)toshiba_mdv24_acr},
-	{sizeof(toshiba_mdv24_intf), (char *)toshiba_mdv24_intf},
-	{sizeof(toshiba_mdv24_pixel), (char *)toshiba_mdv24_pixel},
+	 (char *)toshiba_mdv24_acr, 0},
+	{sizeof(toshiba_mdv24_intf), (char *)toshiba_mdv24_intf, 0},
+	{sizeof(toshiba_mdv24_pixel), (char *)toshiba_mdv24_pixel, 0},
 	{sizeof(toshiba_mdv24_drive_setting),
-	 (char *)toshiba_mdv24_drive_setting},
+	 (char *)toshiba_mdv24_drive_setting, 0},
 	{sizeof(toshiba_mdv24_display_h_timing),
-	 (char *)toshiba_mdv24_display_h_timing},
+	 (char *)toshiba_mdv24_display_h_timing, 0},
 	{sizeof(toshiba_mdv24_source_output),
-	 (char *)toshiba_mdv24_source_output},
+	 (char *)toshiba_mdv24_source_output, 0},
 	{sizeof(toshiba_mdv24_gate_control),
-	 (char *)toshiba_mdv24_gate_control},
+	 (char *)toshiba_mdv24_gate_control, 0},
 	{sizeof(toshiba_mdv24_ltps_control_c4),
-	 (char *)toshiba_mdv24_ltps_control_c4},
+	 (char *)toshiba_mdv24_ltps_control_c4, 0},
 	{sizeof(toshiba_mdv24_source_output_mode),
-	 (char *)toshiba_mdv24_source_output_mode},
+	 (char *)toshiba_mdv24_source_output_mode, 0},
 	{sizeof(toshiba_mdv24_ltps_control_c7),
-	 (char *)toshiba_mdv24_ltps_control_c7},
+	 (char *)toshiba_mdv24_ltps_control_c7, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl),
-	 (char *)toshiba_mdv24_gamma_ctrl},
+	 (char *)toshiba_mdv24_gamma_ctrl, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_a_pos),
-	 (char *)toshiba_mdv24_gamma_ctrl_a_pos},
+	 (char *)toshiba_mdv24_gamma_ctrl_a_pos, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_a_neg),
-	 (char *)toshiba_mdv24_gamma_ctrl_a_neg},
+	 (char *)toshiba_mdv24_gamma_ctrl_a_neg, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_b_pos),
-	 (char *)toshiba_mdv24_gamma_ctrl_b_pos},
+	 (char *)toshiba_mdv24_gamma_ctrl_b_pos, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_b_neg),
-	 (char *)toshiba_mdv24_gamma_ctrl_b_neg},
+	 (char *)toshiba_mdv24_gamma_ctrl_b_neg, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_c_pos),
-	 (char *)toshiba_mdv24_gamma_ctrl_c_pos},
+	 (char *)toshiba_mdv24_gamma_ctrl_c_pos, 0},
 	{sizeof(toshiba_mdv24_gamma_ctrl_c_neg),
-	 (char *)toshiba_mdv24_gamma_ctrl_c_neg},
+	 (char *)toshiba_mdv24_gamma_ctrl_c_neg, 0},
 	{sizeof(toshiba_mdv24_pwr_setting1),
-	 (char *)toshiba_mdv24_pwr_setting1},
+	 (char *)toshiba_mdv24_pwr_setting1, 0},
 	{sizeof(toshiba_mdv24_pwr_setting2),
-	 (char *)toshiba_mdv24_pwr_setting2},
+	 (char *)toshiba_mdv24_pwr_setting2, 0},
 	{sizeof(toshiba_mdv24_pwr_setting_internal),
-	 (char *)toshiba_mdv24_pwr_setting_internal},
+	 (char *)toshiba_mdv24_pwr_setting_internal, 0},
 	{sizeof(toshiba_mdv24_lvl_setting),
-	 (char *)toshiba_mdv24_lvl_setting},
+	 (char *)toshiba_mdv24_lvl_setting, 0},
 	{sizeof(toshiba_mdv24_vcomdc_setting1),
-	 (char *)toshiba_mdv24_vcomdc_setting1},
+	 (char *)toshiba_mdv24_vcomdc_setting1, 0},
 	{sizeof(toshiba_mdv24_vcomdc_setting2),
-	 (char *)toshiba_mdv24_vcomdc_setting2},
+	 (char *)toshiba_mdv24_vcomdc_setting2, 0},
 	{sizeof(toshiba_mdv24_init_fd),
-	 (char *)toshiba_mdv24_init_fd},
+	 (char *)toshiba_mdv24_init_fd, 0},
 	{sizeof(toshiba_mdv24_nvm_load_ctrl),
-	 (char *)toshiba_mdv24_nvm_load_ctrl},
-	{sizeof(dsi_display_exit_sleep), (char *)dsi_display_exit_sleep},
-	{sizeof(dsi_display_display_on), (char *)dsi_display_display_on},
+	 (char *)toshiba_mdv24_nvm_load_ctrl, 0},
+	{sizeof(dsi_display_exit_sleep), (char *)dsi_display_exit_sleep, 0},
+	{sizeof(dsi_display_display_on), (char *)dsi_display_display_on, 0},
 };
 
 static struct mipi_dsi_phy_ctrl mipi_dsi_toshiba_mdt61_panel_phy_ctrl = {
@@ -860,57 +860,57 @@ static struct mipi_dsi_phy_ctrl mipi_dsi_toshiba_mdt61_panel_phy_ctrl = {
 };
 
 static struct mipi_dsi_cmd novatek_panel_manufacture_id_cmd =
-    { sizeof(novatek_panel_manufacture_id), novatek_panel_manufacture_id };
+    { sizeof(novatek_panel_manufacture_id), novatek_panel_manufacture_id, 0 };
 
 static struct mipi_dsi_cmd read_ddb_start_cmd =
-	{sizeof(read_id_a1h_cmd), read_id_a1h_cmd};
+	{sizeof(read_id_a1h_cmd), read_id_a1h_cmd, 0};
 
 static struct mipi_dsi_cmd novatek_panel_cmd_mode_cmds[] = {
-	{sizeof(novatek_panel_sw_reset), novatek_panel_sw_reset}
+	{sizeof(novatek_panel_sw_reset), novatek_panel_sw_reset, 0}
 	,
-	{sizeof(novatek_panel_exit_sleep), novatek_panel_exit_sleep}
+	{sizeof(novatek_panel_exit_sleep), novatek_panel_exit_sleep, 0}
 	,
-	{sizeof(novatek_panel_display_on), novatek_panel_display_on}
+	{sizeof(novatek_panel_display_on), novatek_panel_display_on, 0}
 	,
-	{sizeof(novatek_panel_max_packet), novatek_panel_max_packet}
+	{sizeof(novatek_panel_max_packet), novatek_panel_max_packet, 0}
 	,
-	{sizeof(novatek_panel_f4), novatek_panel_f4}
+	{sizeof(novatek_panel_f4), novatek_panel_f4, 0}
 	,
-	{sizeof(novatek_panel_8c), novatek_panel_8c}
+	{sizeof(novatek_panel_8c), novatek_panel_8c, 0}
 	,
-	{sizeof(novatek_panel_ff), novatek_panel_ff}
+	{sizeof(novatek_panel_ff), novatek_panel_ff, 0}
 	,
-	{sizeof(novatek_panel_set_twolane), novatek_panel_set_twolane}
+	{sizeof(novatek_panel_set_twolane), novatek_panel_set_twolane, 0}
 	,
-	{sizeof(novatek_panel_set_width), novatek_panel_set_width}
+	{sizeof(novatek_panel_set_width), novatek_panel_set_width, 0}
 	,
-	{sizeof(novatek_panel_set_height), novatek_panel_set_height}
+	{sizeof(novatek_panel_set_height), novatek_panel_set_height, 0}
 	,
-	{sizeof(novatek_panel_rgb_888), novatek_panel_rgb_888}
+	{sizeof(novatek_panel_rgb_888), novatek_panel_rgb_888, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm1), novatek_panel_set_led_pwm1}
+	{sizeof(novatek_panel_set_led_pwm1), novatek_panel_set_led_pwm1, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm2), novatek_panel_set_led_pwm2}
+	{sizeof(novatek_panel_set_led_pwm2), novatek_panel_set_led_pwm2, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm3), novatek_panel_set_led_pwm3}
+	{sizeof(novatek_panel_set_led_pwm3), novatek_panel_set_led_pwm3, 0}
 };
 
 static struct mipi_dsi_cmd sharp_qhd_video_mode_cmds[] = {
-	{sizeof(novatek_panel_sw_reset), novatek_panel_sw_reset}
+	{sizeof(novatek_panel_sw_reset), novatek_panel_sw_reset, 0}
 	,
-	{sizeof(novatek_panel_exit_sleep), novatek_panel_exit_sleep}
+	{sizeof(novatek_panel_exit_sleep), novatek_panel_exit_sleep, 0}
 	,
-	{sizeof(novatek_panel_display_on), novatek_panel_display_on}
+	{sizeof(novatek_panel_display_on), novatek_panel_display_on, 0}
 	,
-	{sizeof(novatek_panel_set_twolane), novatek_panel_set_twolane}
+	{sizeof(novatek_panel_set_twolane), novatek_panel_set_twolane, 0}
 	,
-	{sizeof(novatek_panel_rgb_888), novatek_panel_rgb_888}
+	{sizeof(novatek_panel_rgb_888), novatek_panel_rgb_888, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm1), novatek_panel_set_led_pwm1}
+	{sizeof(novatek_panel_set_led_pwm1), novatek_panel_set_led_pwm1, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm2), novatek_panel_set_led_pwm2}
+	{sizeof(novatek_panel_set_led_pwm2), novatek_panel_set_led_pwm2, 0}
 	,
-	{sizeof(novatek_panel_set_led_pwm3), novatek_panel_set_led_pwm3}
+	{sizeof(novatek_panel_set_led_pwm3), novatek_panel_set_led_pwm3, 0}
 };
 
 static struct mipi_dsi_phy_ctrl mipi_dsi_novatek_panel_phy_ctrl = {
