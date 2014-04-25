@@ -155,6 +155,20 @@ void gpio_config_uart_dm(uint8_t id)
 	}
 }
 
+void gpio_config_i2c(uint8_t id)
+{
+	switch (id) {
+	case GSBI_ID_3:
+		gpio_tlmm_config(8, 1, GPIO_OUTPUT, GPIO_NO_PULL,
+				 GPIO_8MA, GPIO_DISABLE);
+		gpio_tlmm_config(9, 1, GPIO_OUTPUT, GPIO_NO_PULL,
+				 GPIO_8MA, GPIO_DISABLE);
+		break;
+	default:
+		ASSERT(0);
+	}
+}
+
 struct pm8xxx_gpio_init {
 	uint32_t gpio;
 	struct pm8921_gpio config;
