@@ -1939,7 +1939,7 @@ unsigned int mmc_boot_init(struct mmc_host *host)
 	/* Wait for the MMC_BOOT_MCI_POWER write to go through. */
 	mmc_mclk_reg_wr_delay();
 
-	return MMC_BOOT_E_SUCCESS;
+	return mmc_ret;
 }
 
 /*
@@ -2271,7 +2271,6 @@ mmc_boot_init_and_identify_cards(struct mmc_host *host,
 {
 	unsigned int mmc_return = MMC_BOOT_E_SUCCESS;
 	unsigned int status;
-	uint8_t mmc_bus_width = 0;
 
 	/* Basic check */
 	if (host == NULL) {

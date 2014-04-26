@@ -31,15 +31,6 @@
 #include <dev/pm8921.h>
 #include <dev/pm8921_pwm.h>
 
-
-static char *clks[NUM_CLOCKS] = {
-	"1K", "32768", "19.2M"
-};
-
-static unsigned pre_div[NUM_PRE_DIVIDE] = {
-	PRE_DIVIDE_0, PRE_DIVIDE_1, PRE_DIVIDE_2, PRE_DIVIDE_3
-};
-
 static unsigned int pt_t[NUM_PRE_DIVIDE][NUM_CLOCKS] = {
     {	PRE_DIVIDE_0 * NSEC_1000HZ,
 		PRE_DIVIDE_0 * NSEC_32768HZ,
@@ -58,19 +49,6 @@ static unsigned int pt_t[NUM_PRE_DIVIDE][NUM_CLOCKS] = {
 		PRE_DIVIDE_2 * NSEC_32768HZ,
 		PRE_DIVIDE_2 * NSEC_19P2MHZ,
 	},
-};
-
-static uint16_t duty_msec[PM_PWM_1KHZ_COUNT_MAX + 1] = {
-	0, 1, 2, 3, 4, 6, 8, 16, 18, 24, 32, 36, 64, 128, 256, 512
-};
-
-static uint16_t pause_count[PM_PWM_PAUSE_COUNT_MAX + 1] = {
-	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-	23, 28, 31, 42, 47, 56, 63, 83, 94, 111, 125, 167, 188, 222, 250, 333,
-	375, 500, 667, 750, 800, 900, 1000, 1100,
-	1200, 1300, 1400, 1500, 1600, 1800, 2000, 2500,
-	3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500,
-	7000
 };
 
 /* Function to get the PWM size, divider, clock for the given period */

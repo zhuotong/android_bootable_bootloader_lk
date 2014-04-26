@@ -67,6 +67,7 @@ static struct fixed_clk pxo_clk = {
 	},
 };
 
+#ifdef DEBUG_CLOCK
 static struct fixed_clk cxo_clk = {
 	.rate = 19200000,
 	.c = {
@@ -74,6 +75,7 @@ static struct fixed_clk cxo_clk = {
 		.ops = &clk_ops_xo,
 	},
 };
+#endif
 
 /*
  * PLL Clocks

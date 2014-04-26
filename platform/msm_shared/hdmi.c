@@ -140,8 +140,6 @@ void hdmi_video_setup()
 	uint32_t hvsync_total = 0;
 	uint32_t hsync_active = 0;
 	uint32_t vsync_active = 0;
-	uint32_t hdmi_frame_ctrl = 0;
-	uint32_t val;
 	struct hdmi_disp_mode_timing_type *hdmi_timing =
 	    hdmi_common_init_panel_info();
 
@@ -295,8 +293,6 @@ void hdmi_app_clk_init(int on)
 
 int hdmi_msm_turn_on(void)
 {
-	uint32_t hotplug_control;
-
 	hdmi_msm_set_mode(0);
 
 	hdmi_msm_reset_core();	// Reset the core
@@ -336,7 +332,7 @@ int hdmi_dtv_init()
 	uint32_t active_v_start = 0;
 	uint32_t active_v_end = 0;
 	uint32_t dtv_hsync_skew = 0;
-	uint32_t intf, stage, snum, mask, data;
+	uint32_t stage, snum, mask, data;
 	unsigned char *rgb_base;
 	unsigned char *overlay_base;
 	uint32_t val;

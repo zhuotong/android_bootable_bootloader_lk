@@ -1647,8 +1647,10 @@ void cmd_boot(const char *arg, void *data, unsigned sz)
 	struct boot_img_hdr *hdr;
 	struct kernel64_hdr *kptr;
 	char *ptr = ((char*) data);
+#if DEVICE_TREE
 	int ret = 0;
 	uint8_t dtb_copied = 0;
+#endif
 
 	if (sz < sizeof(hdr)) {
 		fastboot_fail("invalid bootimage header");

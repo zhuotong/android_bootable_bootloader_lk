@@ -83,6 +83,7 @@ struct alloc_struct_begin {
 #endif
 };
 
+#if WITH_LIB_CONSOLE
 static void dump_free_chunk(struct free_heap_chunk *chunk)
 {
 	dprintf(INFO, "\t\tbase %p, end 0x%lx, len 0x%zx\n", chunk, (vaddr_t)chunk + chunk->len, chunk->len);
@@ -99,7 +100,9 @@ static void heap_dump(void)
 		dump_free_chunk(chunk);
 	}
 }
+#endif
 
+#if 0
 static void heap_test(void)
 {
 	void *ptr[16];
@@ -151,6 +154,7 @@ static void heap_test(void)
 
 	heap_dump();
 }
+#endif
 
 // try to insert this free chunk into the free list, consuming the chunk by merging it with
 // nearby ones if possible. Returns base of whatever chunk it became in the list.

@@ -30,6 +30,9 @@
 #include "image_verify.h"
 #include "scm.h"
 
+static int image_decrypt_signature(unsigned char *signature_ptr,
+				   unsigned char *plain_text);
+
 /*
  * Returns -1 if decryption failed otherwise size of plain_text in bytes
  */

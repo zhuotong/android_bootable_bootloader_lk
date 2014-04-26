@@ -35,6 +35,7 @@
 #include <err.h>
 #include <reg.h>
 #include <mdp4.h>
+#include "mipi_toshiba_720p.h"
 
 int mipi_toshiba_video_720p_config(void *pdata)
 {

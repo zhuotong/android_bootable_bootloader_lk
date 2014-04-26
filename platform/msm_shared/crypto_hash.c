@@ -35,6 +35,29 @@ static crypto_SHA256_ctx g_sha256_ctx;
 static crypto_SHA1_ctx g_sha1_ctx;
 static bool crypto_init_done;
 
+static void crypto_init(void);
+static crypto_result_type do_sha(unsigned char *buff_ptr,
+				 unsigned int buff_size,
+				 unsigned char *digest_ptr,
+				 crypto_auth_alg_type auth_alg);
+
+static crypto_result_type do_sha_update(void *ctx_ptr,
+					unsigned char *buff_ptr,
+					unsigned int buff_size,
+					crypto_auth_alg_type auth_alg,
+					bool first, bool last);
+
+static unsigned int calc_num_bytes_to_send(void *ctx_ptr,
+					   unsigned int buff_size, bool last);
+
+static crypto_result_type crypto_sha256(unsigned char *buff_ptr,
+					unsigned int buff_size,
+					unsigned char *digest_ptr);
+
+static crypto_result_type crypto_sha1(unsigned char *buff_ptr,
+				      unsigned int buff_size,
+				      unsigned char *digest_ptr);
+
 extern void ce_clock_init(void);
 
 /*

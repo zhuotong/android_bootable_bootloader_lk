@@ -243,8 +243,6 @@ int branch_clk_enable(struct clk *clk)
 
 void branch_clk_disable(struct clk *clk)
 {
-	struct branch_clk *branch = to_branch_clk(clk);
-
 	/* TODO: Stub function for now */
 }
 

@@ -118,11 +118,12 @@ static uint32_t response_value = 0;
 
 uint32_t mdss_dsi_read_panel_signature(uint32_t panel_signature)
 {
-	uint32_t rec_buf[1];
-	uint32_t *lp = rec_buf, data;
 	int ret = response_value;
 
 #if (DISPLAY_TYPE_MDSS == 1)
+	uint32_t rec_buf[1];
+	uint32_t *lp = rec_buf, data;
+
 	if (ret && ret != panel_signature)
 		goto exit_read_signature;
 
@@ -148,11 +149,12 @@ exit_read_signature:
 
 int mdss_dual_dsi_cmd_dma_trigger_for_panel()
 {
-	uint32_t ReadValue;
-	uint32_t count = 0;
 	int status = 0;
 
 #if (DISPLAY_TYPE_MDSS == 1)
+	uint32_t ReadValue;
+	uint32_t count = 0;
+
 	writel(0x03030303, MIPI_DSI0_BASE + INT_CTRL);
 	writel(0x1, MIPI_DSI0_BASE + CMD_MODE_DMA_SW_TRIGGER);
 	dsb();
@@ -209,12 +211,13 @@ int dsi_cmd_dma_trigger_for_panel()
 int mdss_dual_dsi_cmds_tx(struct mipi_dsi_cmd *cmds, int count)
 {
 	int ret = 0;
+
+#if (DISPLAY_TYPE_MDSS == 1)
 	struct mipi_dsi_cmd *cm;
 	int i = 0;
 	char pload[256];
 	uint32_t off;
 
-#if (DISPLAY_TYPE_MDSS == 1)
 	/* Align pload at 8 byte boundry */
 	off = pload;
 	off &= 0x07;
@@ -381,6 +384,7 @@ int mipi_dsi_cmds_rx(char **rp, int len)
 	return len;
 }
 
+#if DISPLAY_MIPI_PANEL_NOVATEK_BLUE
 static int mipi_dsi_cmd_bta_sw_trigger(void)
 {
 	uint32_t data;
@@ -414,6 +418,7 @@ static uint32_t mipi_novatek_manufacture_id(void)
 	data = data >> 8;
 	return data;
 }
+#endif
 
 int mdss_dsi_host_init(struct mipi_dsi_panel_config *pinfo, uint32_t
 		broadcast)
@@ -1226,7 +1231,7 @@ int mipi_dsi_cmd_mode_config(unsigned short disp_width,
 	unsigned char TRAFIC_MODE;
 	unsigned char DLNx_EN;
 	// video mode data ctrl
-	int status = 0;
+	int status = NO_ERROR;
 	unsigned char interleav = 0;
 	unsigned char ystride = 0x03;
 	// disable mdp first
@@ -1275,7 +1280,7 @@ int mipi_dsi_cmd_mode_config(unsigned short disp_width,
 	writel(0x13ff3fe0, DSI_ERR_INT_MASK0);
 	writel(0x1, DSI_EOT_PACKET_CTRL);
 
-	return NO_ERROR;
+	return status;
 }
 
 int mipi_dsi_on()

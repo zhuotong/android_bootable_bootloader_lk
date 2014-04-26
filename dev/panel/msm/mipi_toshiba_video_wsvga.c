@@ -35,6 +35,7 @@
 #include <reg.h>
 #include <platform/iomap.h>
 #include <mdp4.h>
+#include "mipi_toshiba.h"
 
 int mipi_toshiba_video_wsvga_config(void *pdata)
 {

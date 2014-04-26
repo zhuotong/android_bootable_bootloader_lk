@@ -358,6 +358,7 @@ scan_qwerty_keypad(struct timer *timer, time_t now, void *arg)
     return INT_RESCHEDULE;
 }
 
+#ifdef QT_8660_KEYPAD_HW_BUG
 static enum handler_return
 scan_qt_keypad(struct timer *timer, time_t now, void *arg)
 {
@@ -402,6 +403,7 @@ scan_qt_keypad(struct timer *timer, time_t now, void *arg)
     event_signal(&qwerty_keypad->full_scan, false);
     return INT_RESCHEDULE;
 }
+#endif
 
 void ssbi_keypad_init(struct qwerty_keypad_info  *qwerty_kp)
 {

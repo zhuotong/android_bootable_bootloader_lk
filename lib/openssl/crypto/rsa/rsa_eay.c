@@ -256,6 +256,7 @@ err:
 	return(r);
 	}
 
+#ifndef LK_NO_RAND
 static BN_BLINDING *rsa_get_blinding(RSA *rsa, int *local, BN_CTX *ctx)
 {
 	BN_BLINDING *ret;
@@ -323,6 +324,7 @@ static BN_BLINDING *rsa_get_blinding(RSA *rsa, int *local, BN_CTX *ctx)
 		CRYPTO_r_unlock(CRYPTO_LOCK_RSA);
 	return ret;
 }
+#endif
 
 static int rsa_blinding_convert(BN_BLINDING *b, int local, BIGNUM *f,
 	BIGNUM *r, BN_CTX *ctx)

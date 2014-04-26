@@ -107,29 +107,5 @@ extern void crypto_get_ctx(void *ctx_ptr);
 
 extern uint32_t crypto_get_max_auth_blk_size();
 
-static void crypto_init(void);
-
-static crypto_result_type do_sha(unsigned char *buff_ptr,
-				 unsigned int buff_size,
-				 unsigned char *digest_ptr,
-				 crypto_auth_alg_type auth_alg);
-
-static crypto_result_type do_sha_update(void *ctx_ptr,
-					unsigned char *buff_ptr,
-					unsigned int buff_size,
-					crypto_auth_alg_type auth_alg,
-					bool first, bool last);
-
-static unsigned int calc_num_bytes_to_send(void *ctx_ptr,
-					   unsigned int buff_size, bool last);
-
-static crypto_result_type crypto_sha256(unsigned char *buff_ptr,
-					unsigned int buff_size,
-					unsigned char *digest_ptr);
-
-static crypto_result_type crypto_sha1(unsigned char *buff_ptr,
-				      unsigned int buff_size,
-				      unsigned char *digest_ptr);
-
 bool crypto_initialized(void);
 #endif

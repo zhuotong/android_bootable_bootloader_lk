@@ -50,6 +50,7 @@
                                    SCM_MASK_IRQS | \
                                    ((n) & 0xf))
 
+static uint32 smc(uint32 cmd_addr);
 
 /**
  * alloc_scm_command() - Allocate an SCM command

@@ -173,7 +173,6 @@ typedef struct {
 
 #define TZBSP_GET_FEATURE_VERSION(major) ((major >> 22)& 0x3FF)
 
-static uint32 smc(uint32 cmd_addr);
 int decrypt_scm(uint32_t ** img_ptr, uint32_t * img_len_ptr);
 int decrypt_scm_v2(uint32_t ** img_ptr, uint32_t * img_len_ptr);
 int encrypt_scm(uint32_t ** img_ptr, uint32_t * img_len_ptr);

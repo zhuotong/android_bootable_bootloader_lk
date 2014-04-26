@@ -34,6 +34,7 @@
 #include <err.h>
 #include <reg.h>
 #include <mdp4.h>
+#include "mipi_sharp.h"
 
 int mipi_sharp_video_qhd_config(void *pdata)
 {

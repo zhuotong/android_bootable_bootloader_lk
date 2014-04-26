@@ -372,9 +372,8 @@ static void handle_ept_complete(struct udc_endpoint *ept)
 {
 	struct ept_queue_item *item;
 	unsigned actual, total_len;
-	int status, len;
+	int status;
 	struct usb_request *req=NULL;
-	void *buf;
 
 	DBG("ept%d %s complete req=%p\n",
 	    ept->num, ept->in ? "in" : "out", ept->req);

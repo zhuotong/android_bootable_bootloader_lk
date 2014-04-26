@@ -96,12 +96,14 @@ static int send_bio_chars(void *arg, const void *buf, int len)
 	return 1;
 }
 
+#ifndef OPENSSL_NO_FP_API
 static int send_fp_chars(void *arg, const void *buf, int len)
 {
 	if(!arg) return 1;
 	if(fwrite(buf, 1, len, arg) != (int)len) return 0;
 	return 1;
 }
+#endif
 
 typedef int char_io(void *arg, const void *buf, int len);
 

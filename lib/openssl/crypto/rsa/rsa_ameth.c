@@ -170,7 +170,7 @@ static void int_rsa_free(EVP_PKEY *pkey)
 	RSA_free(pkey->pkey.rsa);
 	}
 
-
+#ifndef LK_NO_BIO
 static void update_buflen(const BIGNUM *b, size_t *pbuflen)
 	{
 	size_t i;
@@ -180,7 +180,6 @@ static void update_buflen(const BIGNUM *b, size_t *pbuflen)
 			*pbuflen = i;
 	}
 
-#ifndef LK_NO_BIO
 static int do_rsa_print(BIO *bp, const RSA *x, int off, int priv)
 	{
 	char *str;

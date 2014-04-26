@@ -43,6 +43,7 @@
 #include <vibrator.h>
 #endif
 
+#if WITH_DEBUG_DCC
 static void write_dcc(char c)
 {
 	uint32_t timeout = 10;
@@ -58,6 +59,7 @@ static void write_dcc(char c)
 		timeout--;
 	}
 }
+#endif
 
 #if WITH_DEBUG_LOG_BUF
 
