@@ -95,6 +95,7 @@ void smem_ptable_init(void)
 	{
 		dprintf(CRITICAL, "Unknown ptable version (%d)", smem_ptable.version);
 		ASSERT(0);
+		return;
 	}
 
 	ret = smem_read_alloc_entry(SMEM_AARM_PARTITION_TABLE,
@@ -104,6 +105,7 @@ void smem_ptable_init(void)
 	{
 		dprintf(CRITICAL, "Failed to read ptable (%d)", ret);
 		ASSERT(0);
+		return;
 	}
 
 	dump_smem_ptable();
@@ -240,6 +242,7 @@ int smem_ram_ptable_init_v1()
 	{
 		dprintf(CRITICAL,"ERROR: Wrong smem_ram_ptable version: %u", version);
 		ASSERT(0);
+		return -1;
 	}
 
 	i = smem_read_alloc_entry(SMEM_USABLE_RAM_PARTITION_TABLE,

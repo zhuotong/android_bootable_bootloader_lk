@@ -303,7 +303,9 @@
  | BVAL(s1_msb, s1_lsb, s))
 
 /* CC Registers */
+#ifndef CC
 #define CC(mde_lsb, n) (BVAL((mde_lsb+1), mde_lsb, MN_MODE_DUAL_EDGE) * !!(n))
+#endif
 #define CC_BANKED(mde0_lsb, mde1_lsb, n) \
     ((BVAL((mde0_lsb+1), mde0_lsb, MN_MODE_DUAL_EDGE) \
       | BVAL((mde1_lsb+1), mde1_lsb, MN_MODE_DUAL_EDGE)) \

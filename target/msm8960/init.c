@@ -431,6 +431,7 @@ void target_detect(struct board_data *board)
 		dprintf(CRITICAL, "platform (%d) is not identified.\n",
 			platform);
 		ASSERT(0);
+		return;
 	}
 	board->target = target_id;
 }

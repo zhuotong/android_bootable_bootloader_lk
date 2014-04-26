@@ -244,7 +244,7 @@ int mdss_dual_dsi_cmds_tx(struct mipi_dsi_cmd *cmds, int count)
 int mdss_dsi_cmds_rx(uint32_t **rp, int rp_len, int rdbk_len)
 {
 	uint32_t *lp, data;
-	char *dp;
+	uint32_t *dp;
 	int i, off;
 	int rlen, res;
 
@@ -302,11 +302,11 @@ int mipi_dsi_cmds_tx(struct mipi_dsi_cmd *cmds, int count)
 	uint32_t off;
 
 	/* Align pload at 8 byte boundry */
-	off = pload;
+	off = (uint32_t)pload;
 	off &= 0x07;
 	if (off)
 		off = 8 - off;
-	off += pload;
+	off += (uint32_t)pload;
 
 	cm = cmds;
 	for (i = 0; i < count; i++) {
@@ -418,6 +418,7 @@ static uint32_t mipi_novatek_manufacture_id(void)
 int mdss_dsi_host_init(struct mipi_dsi_panel_config *pinfo, uint32_t
 		broadcast)
 {
+#if (DISPLAY_TYPE_MDSS == 1)
 	uint8_t DMA_STREAM1 = 0;	// for mdp display processor path
 	uint8_t EMBED_MODE1 = 1;	// from frame buffer
 	uint8_t POWER_MODE2 = 1;	// from frame buffer
@@ -429,7 +430,6 @@ int mdss_dsi_host_init(struct mipi_dsi_panel_config *pinfo, uint32_t
 	uint8_t lane_swap = 0;
 	uint32_t timing_ctl = 0;
 
-#if (DISPLAY_TYPE_MDSS == 1)
 	switch (pinfo->num_of_lanes) {
 	default:
 	case 1:
@@ -866,7 +866,7 @@ struct fbcon_config *mipi_init(void)
 	mipi_dsi_cmd_bta_sw_trigger();
 	mipi_novatek_manufacture_id();
 #endif
-	mipi_fb_cfg.base = MIPI_FB_ADDR;
+	mipi_fb_cfg.base = (void*)MIPI_FB_ADDR;
 
 	if (panel_info->mode == MIPI_VIDEO_MODE)
 		status += mipi_dsi_video_config(panel_info->num_of_lanes);
@@ -1006,10 +1006,11 @@ int mdss_dsi_video_mode_config(uint16_t disp_width,
 int mdss_dsi_config(struct msm_fb_panel_data *panel)
 {
 	int ret = NO_ERROR;
+
+#if (DISPLAY_TYPE_MDSS == 1)
 	struct msm_panel_info *pinfo;
 	struct mipi_dsi_panel_config mipi_pinfo;
 
-#if (DISPLAY_TYPE_MDSS == 1)
 	if (!panel)
 		return ERR_INVALID_ARGS;
 
@@ -1051,9 +1052,9 @@ int mdss_dsi_config(struct msm_fb_panel_data *panel)
 
 	if (pinfo->rotate && panel->rotate)
 		pinfo->rotate();
-#endif
 
 error:
+#endif
 	return ret;
 }
 

@@ -120,9 +120,9 @@ static unsigned int
 msm_boot_uart_calculate_num_chars_to_write(char *data_in,
 				 uint32_t *num_of_chars)
 {
-	int i = 0, j = 0;
+	uint32_t i = 0, j = 0;
 
-	if ((data_in == NULL) || (*num_of_chars < 0)) {
+	if (data_in == NULL) {
 		return MSM_BOOT_UART_DM_E_INVAL;
 	}
 
@@ -314,7 +314,7 @@ msm_boot_uart_dm_write(uint32_t base, char *data, unsigned int num_of_chars)
 	unsigned int tx_char_left = 0, tx_char = 0;
 	unsigned int tx_word = 0;
 	int i = 0;
-	char *tx_data = NULL;
+	unsigned char *tx_data = NULL;
 	uint8_t num_chars_written;
 
 	if ((data == NULL) || (num_of_chars <= 0)) {
@@ -323,7 +323,7 @@ msm_boot_uart_dm_write(uint32_t base, char *data, unsigned int num_of_chars)
 
 	msm_boot_uart_calculate_num_chars_to_write(data, &num_of_chars);
 
-	tx_data = data;
+	tx_data = (unsigned char*)data;
 
 	/* Write to NO_CHARS_FOR_TX register number of characters
 	 * to be transmitted. However, before writing TX_FIFO must

@@ -71,7 +71,7 @@ int mdp_lcdc_config(struct msm_panel_info *pinfo,
 			pinfo->yres + lcdc->yres_pad);
 
 	/* write fb addr in MDP_DMA_P_BUF_ADDR */
-	writel(fb->base, MDP_DMA_P_BUF_ADDR);
+	writel((unsigned)fb->base, MDP_DMA_P_BUF_ADDR);
 
 	/* write active region size*/
 	writel(mdp_rgb_size, MDP_DMA_P_SIZE);

@@ -818,7 +818,7 @@ _flash_nand_read_page(dmov_s * cmdlist, unsigned *ptrlist,
 	 * 1 : The block is bad
 	 * 0 : The block is good
 	 */
-	if (bbtbl[block] == -1) {
+	if (bbtbl[block] == -1u) {
 		isbad = flash_nand_block_isbad(cmdlist, ptrlist, page);
 		if (isbad) {
 			/* Found bad , set the bad table entry */
@@ -2310,6 +2310,8 @@ _flash_onenand_read_page(dmov_s * cmdlist, unsigned *ptrlist,
 	unsigned curr_addr = (unsigned)_addr;
 #if VERBOSE
 	unsigned spareaddr = (unsigned)_spareaddr;
+	unsigned interrupt_status;
+	unsigned ecc_status;
 #endif
 	unsigned i;
 	unsigned erasesize = (flash_pagesize * num_pages_per_blk);
@@ -2325,8 +2327,7 @@ _flash_onenand_read_page(dmov_s * cmdlist, unsigned *ptrlist,
 	    ONENAND_SYSCFG1_ECCENA;
 
 	unsigned controller_status;
-	unsigned interrupt_status;
-	unsigned ecc_status;
+
 	if (raw_mode != 1) {
 		int isbad = 0;
 		isbad = flash_onenand_block_isbad(cmdlist, ptrlist, page);
@@ -2647,11 +2648,12 @@ _flash_onenand_read_page(dmov_s * cmdlist, unsigned *ptrlist,
 
 	dmov_exec_cmdptr(DMOV_NAND_CHAN, ptr);
 
-	ecc_status = (data->data3 >> 16) & 0x0000FFFF;
-	interrupt_status = (data->data4 >> 0) & 0x0000FFFF;
 	controller_status = (data->data4 >> 16) & 0x0000FFFF;
 
 #if VERBOSE
+	ecc_status = (data->data3 >> 16) & 0x0000FFFF;
+	interrupt_status = (data->data4 >> 0) & 0x0000FFFF;
+
 	dprintf(INFO, "\n%s: sflash status %x %x %x %x %x %x %x"
 		"%x %x\n", __func__,
 		data->sfstat[0],
@@ -3321,7 +3323,7 @@ static struct ptable *flash_ptable = NULL;
 
 void flash_init(void)
 {
-	int i = 0;
+	unsigned int i = 0;
 	ASSERT(flash_ptable == NULL);
 
 	flash_ptrlist = memalign(32, 1024);

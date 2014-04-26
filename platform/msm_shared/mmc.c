@@ -2744,10 +2744,11 @@ mmc_wp(unsigned int sector, unsigned int size, unsigned char set_clear_wp)
 		return MMC_BOOT_E_FAILURE;
 }
 
-void mmc_wp_test(void)
+unsigned int mmc_wp_test(void)
 {
 	unsigned int mmc_ret = 0;
 	mmc_ret = mmc_wp(0xE06000, 0x5000, 1);
+	return mmc_ret;
 }
 
 unsigned mmc_get_psn(void)
@@ -2884,7 +2885,7 @@ mmc_boot_fifo_write(unsigned int *mmc_ptr, unsigned int data_len)
 			sz = ((count >> 2) >  MMC_BOOT_MCI_HFIFO_COUNT) \
 				 ? MMC_BOOT_MCI_HFIFO_COUNT : (count >> 2);
 
-			for (int i = 0; i < sz; i++) {
+			for (unsigned i = 0; i < sz; i++) {
 				writel(*mmc_ptr, MMC_BOOT_MCI_FIFO);
 				mmc_ptr++;
 				/* increase mmc_count by word size */

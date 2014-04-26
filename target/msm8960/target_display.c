@@ -205,9 +205,10 @@ static int msm8960_mipi_panel_power(int enable)
 
 static int msm8960_liquid_mipi_panel_power(int enable)
 {
+	int rc = 0;
+
 	if (enable) {
 		static int gpio17, gpio21, gpio43 ;
-		int rc;
 
 		struct pm8921_gpio gpio_config = {
 			.direction = PM_GPIO_DIR_OUT,
@@ -252,7 +253,7 @@ static int msm8960_liquid_mipi_panel_power(int enable)
 		msm8960_backlight_on();
 	}
 
-	return 0;
+	return rc;
 }
 
 void target_display_init(const char *panel_name)

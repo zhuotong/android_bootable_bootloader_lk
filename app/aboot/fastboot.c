@@ -287,7 +287,7 @@ static int hsusb_usb_read(void *_buf, unsigned len)
 
 	while (len > 0) {
 		xfer = (len > MAX_USBFS_BULK_SIZE) ? MAX_USBFS_BULK_SIZE : len;
-		req->buf = PA((addr_t)buf);
+		req->buf = (void*)PA((addr_t)buf);
 		req->length = xfer;
 		req->complete = req_complete;
 		r = udc_request_queue(out, req);
@@ -313,7 +313,7 @@ static int hsusb_usb_read(void *_buf, unsigned len)
 	 * Force reload of buffer from memory
 	 * since transaction is complete now.
 	 */
-	arch_invalidate_cache_range(_buf, count);
+	arch_invalidate_cache_range((addr_t) _buf, count);
 	return count;
 
 oops:
@@ -328,7 +328,7 @@ static int hsusb_usb_write(void *buf, unsigned len)
 	if (fastboot_state == STATE_ERROR)
 		goto oops;
 
-	req->buf = PA((addr_t)buf);
+	req->buf = (void*)PA((addr_t)buf);
 	req->length = len;
 	req->complete = req_complete;
 	r = udc_request_queue(in, req);
@@ -350,7 +350,8 @@ oops:
 
 void fastboot_ack(const char *code, const char *reason)
 {
-	STACKBUF_DMA_ALIGN(response, MAX_RSP_SIZE);
+	STACKBUF_DMA_ALIGN(__response, MAX_RSP_SIZE);
+	char* response = (char*)__response;
 
 	if (fastboot_state != STATE_COMMAND)
 		return;
@@ -367,7 +368,8 @@ void fastboot_ack(const char *code, const char *reason)
 
 void fastboot_info(const char *reason)
 {
-	STACKBUF_DMA_ALIGN(response, MAX_RSP_SIZE);
+	STACKBUF_DMA_ALIGN(__response, MAX_RSP_SIZE);
+	char* response = (char*)__response;
 
 	if (fastboot_state != STATE_COMMAND)
 		return;
@@ -405,7 +407,8 @@ static void cmd_getvar(const char *arg, void *data, unsigned sz)
 
 static void cmd_download(const char *arg, void *data, unsigned sz)
 {
-	STACKBUF_DMA_ALIGN(response, MAX_RSP_SIZE);
+	STACKBUF_DMA_ALIGN(__response, MAX_RSP_SIZE);
+	char* response = (char*)__response;
 	unsigned len = hex2unsigned(arg);
 	int r;
 

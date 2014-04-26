@@ -258,6 +258,11 @@ void fbcon_putImage(struct fbimage *fbimg, bool flag)
 		height = header->height;
 		logo_base = (unsigned char *)fbimg->image;
 	}
+	else {
+		dprintf(CRITICAL,"fbimg is NULL\n");
+		ASSERT(0);
+		return;
+	}
 
 	total_x = config->width;
 	total_y = config->height;

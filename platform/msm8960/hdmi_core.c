@@ -302,7 +302,7 @@ int hdmi_dtv_on()
 {
 	uint32_t ahb_en_reg = readl(AHB_EN_REG);
 	uint32_t ahb_enabled = ahb_en_reg & BIT(4);
-	uint32_t val, pll_mode, ns_val, pll_config;
+	uint32_t val, ns_val;
 
 	if (!ahb_enabled) {
 		dprintf(INFO, "ahb not enabled, turning on\n");

@@ -314,12 +314,12 @@ int udc_request_queue(struct udc_endpoint *ept, struct udc_request *_req)
 				return -1;
 			} else {
 				count ++;
-				curr_item->next = PA(item);
+				curr_item->next = PA((unsigned)item);
 				item->next = TERMINATE;
 			}
 		} else
 			/* Since next TD in chain already exists */
-			item = VA(curr_item->next);
+			item = (void*)VA(curr_item->next);
 
 		/* Update TD with transfer information */
 		item->info = INFO_BYTES(xfer) | INFO_ACTIVE;
@@ -338,7 +338,7 @@ int udc_request_queue(struct udc_endpoint *ept, struct udc_request *_req)
 	curr_item->next = TERMINATE;
 	curr_item->info |= INFO_IOC;
 	enter_critical_section();
-	ept->head->next = PA(req->item);
+	ept->head->next = PA((unsigned)req->item);
 	ept->head->info = 0;
 	ept->req = req;
 	arch_clean_invalidate_cache_range((addr_t) ept,
@@ -347,7 +347,7 @@ int udc_request_queue(struct udc_endpoint *ept, struct udc_request *_req)
 					  sizeof(struct ept_queue_head));
 	arch_clean_invalidate_cache_range((addr_t) ept->req,
 					  sizeof(struct usb_request));
-	arch_clean_invalidate_cache_range((addr_t) VA(req->req.buf),
+	arch_clean_invalidate_cache_range((addr_t) VA((unsigned)req->req.buf),
 					  req->req.length);
 
 	item = req->item;
@@ -357,7 +357,7 @@ int udc_request_queue(struct udc_endpoint *ept, struct udc_request *_req)
 		if (curr_item->next == TERMINATE)
 			item = NULL;
 		else
-			item = curr_item->next;
+			item = (void*)curr_item->next;
 		arch_clean_invalidate_cache_range((addr_t) curr_item,
 					  sizeof(struct ept_queue_item));
 	}
@@ -384,13 +384,13 @@ static void handle_ept_complete(struct udc_endpoint *ept)
 
 	if(ept->req)
 	{
-		req = VA(ept->req);
+		req = (void*)VA((unsigned)ept->req);
 		arch_invalidate_cache_range((addr_t) ept->req,
 						sizeof(struct usb_request));
 	}
 
 	if (req) {
-		item = VA(req->item);
+		item = (void*)VA((unsigned)req->item);
 		/* total transfer length for transacation */
 		total_len = req->req.length;
 		ept->req = 0;
@@ -438,7 +438,7 @@ static void handle_ept_complete(struct udc_endpoint *ept)
 				actual += MAX_TD_XFER_SIZE - ((item->info >> 16) & 0x7FFF);
 				total_len -= MAX_TD_XFER_SIZE - ((item->info >> 16) & 0x7FFF);
 				/*Move to next item in chain*/
-				item = VA(item->next);
+				item = (void*)VA(item->next);
 			}
 		}
 		status = 0;
@@ -480,7 +480,7 @@ static struct udc_endpoint *ep0in, *ep0out;
 static struct udc_request *ep0req;
 
 static void
-ep0_setup_ack_complete(struct udc_endpoint *ep, struct usb_request *req)
+ep0_setup_ack_complete(struct udc_request *req, unsigned actual, int status)
 {
 	uint32_t mode;
 
@@ -524,7 +524,7 @@ static void setup_tx(void *buf, unsigned len)
 {
 	DBG("setup_tx %p %d\n", buf, len);
 	memcpy(ep0req->buf, buf, len);
-	ep0req->buf = PA((addr_t)ep0req->buf);
+	ep0req->buf = (void*)PA((addr_t)ep0req->buf);
 	ep0req->complete = ep0in_complete;
 	ep0req->length = len;
 	udc_request_queue(ep0in, ep0req);

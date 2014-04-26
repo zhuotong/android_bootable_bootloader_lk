@@ -29,6 +29,8 @@
 #ifndef _TARGET_MSM8960_DISPLAY_H
 #define _TARGET_MSM8960_DISPLAY_H
 
+#include <mipi_dsi.h>
+
 #define MIPI_FB_ADDR  0x89000000
 
 /* Toshiba MDT61 Mipi Panel */

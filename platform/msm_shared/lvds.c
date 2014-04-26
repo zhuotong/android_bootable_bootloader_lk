@@ -34,8 +34,10 @@
 #include <arch/defines.h>
 #include <platform/iomap.h>
 #include <platform/clock.h>
+#include <platform/timer.h>
 #include <dev/fbcon.h>
 #include <dev/lcdc.h>
+#include <debug.h>
 
 #include <msm_panel.h>
 #define MDP_OUTP(addr, val)		writel(val, addr);
@@ -147,6 +149,11 @@ void lvds_init(struct msm_panel_info *pinfo)
 			lvds_intf = 0x0001078c;
 			lvds_phy_cfg0 = BIT(6);
 		}
+	}
+	else {
+		dprintf(CRITICAL,"unsupported bpp\n");
+		ASSERT(0);
+		return;
 	}
 
 	/* MDP_LVDSPHY_CFG0 */

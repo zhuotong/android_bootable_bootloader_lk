@@ -144,7 +144,7 @@ static char target_boot_params[64];
 /* Assuming unauthorized kernel image by default */
 static int auth_kernel_img = 0;
 
-static device_info device = {DEVICE_MAGIC, 0, 0, 0, 0};
+static device_info device = {DEVICE_MAGIC, 0, 0, 0, {}};
 
 struct atag_ptbl_entry
 {
@@ -240,11 +240,11 @@ char* get_boot_dev_cmdline()
 }
 #endif
 
-unsigned char *update_cmdline(const char * cmdline)
+char *update_cmdline(const char * cmdline)
 {
 	int cmdline_len = 0;
 	int have_cmdline = 0;
-	unsigned char *cmdline_final = NULL;
+	char *cmdline_final = NULL;
 #if UFS_SUPPORT
 	const char *boot_dev_cmdline = NULL;
 #endif
@@ -362,7 +362,7 @@ unsigned char *update_cmdline(const char * cmdline)
 
 	if (cmdline_len > 0) {
 		const char *src;
-		unsigned char *dst = (unsigned char*) malloc((cmdline_len + 4) & (~3));
+		char *dst = (char*) malloc((cmdline_len + 4) & (~3));
 		ASSERT(dst != NULL);
 
 		/* Save start ptr for debug print */
@@ -603,7 +603,7 @@ void boot_linux(void *kernel, unsigned *tags,
 		const char *cmdline, unsigned machtype,
 		void *ramdisk, unsigned ramdisk_size)
 {
-	unsigned char *final_cmdline;
+	char *final_cmdline;
 #if DEVICE_TREE
 	int ret = 0;
 #endif
@@ -612,7 +612,7 @@ void boot_linux(void *kernel, unsigned *tags,
 	uint32_t tags_phys = PA((addr_t)tags);
 	struct kernel64_hdr *kptr = (struct kernel64_hdr*)kernel;
 
-	ramdisk = PA(ramdisk);
+	ramdisk = (void*)PA((unsigned)ramdisk);
 
 	final_cmdline = update_cmdline((const char*)cmdline);
 
@@ -642,7 +642,7 @@ void boot_linux(void *kernel, unsigned *tags,
 
 
 	dprintf(INFO, "booting linux @ %p, ramdisk @ %p (%d), tags/device tree @ %p\n",
-		entry, ramdisk, ramdisk_size, tags_phys);
+		entry, ramdisk, ramdisk_size, (void*)tags_phys);
 
 	enter_critical_section();
 
@@ -925,7 +925,7 @@ int boot_linux_from_mmc(void)
 		dprintf(INFO, "Loading boot image (%d): start\n", imagesize_actual);
 		bs_set_timestamp(BS_KERNEL_LOAD_START);
 
-		if (check_aboot_addr_range_overlap(image_addr, imagesize_actual))
+		if (check_aboot_addr_range_overlap((uint32_t)image_addr, imagesize_actual))
 		{
 			dprintf(CRITICAL, "Boot image buffer address overlaps with aboot addresses.\n");
 			return -1;
@@ -943,7 +943,7 @@ int boot_linux_from_mmc(void)
 
 		offset = imagesize_actual;
 
-		if (check_aboot_addr_range_overlap(image_addr + offset, page_size))
+		if (check_aboot_addr_range_overlap((uint32_t)image_addr + offset, page_size))
 		{
 			dprintf(CRITICAL, "Signature read buffer address overlaps with aboot addresses.\n");
 			return -1;
@@ -956,7 +956,7 @@ int boot_linux_from_mmc(void)
 			return -1;
 		}
 
-		verify_signed_bootimg(image_addr, imagesize_actual);
+		verify_signed_bootimg((uint32_t)image_addr, imagesize_actual);
 
 		/* Move kernel, ramdisk and device tree to correct address */
 		memmove((void*) hdr->kernel_addr, (char *)(image_addr + page_size), hdr->kernel_size);
@@ -1257,7 +1257,7 @@ int boot_linux_from_flash(void)
 			return -1;
 		}
 
-		verify_signed_bootimg(image_addr, imagesize_actual);
+		verify_signed_bootimg((uint32_t)image_addr, imagesize_actual);
 
 		/* Move kernel and ramdisk to correct address */
 		memmove((void*) hdr->kernel_addr, (char *)(image_addr + page_size), hdr->kernel_size);
@@ -1542,10 +1542,10 @@ int read_dualboot_info_mmc(char *bootmode)
 	char *ptn_name = "misc";
 	unsigned long long ptn = 0;
 	unsigned int size = ROUND_TO_PAGE(sizeof(*bootmode)*16,511);
-	unsigned char data[size];
+	char data[size];
 	int index = INVALID_PTN;
 
-	index = partition_get_index((unsigned char *) ptn_name);
+	index = partition_get_index(ptn_name);
 	ptn = partition_get_offset(index);
 	if(ptn == 0) {
 		dprintf(CRITICAL,"partition %s doesn't exist\n",ptn_name);
@@ -1821,8 +1821,9 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 	char *pname = NULL;
 	uint8_t lun = 0;
 	bool lun_set = false;
+	char* arg_copy = strdup(arg);
 
-	token = strtok(arg, ":");
+	token = strtok(arg_copy, ":");
 	pname = token;
 	token = strtok(NULL, ":");
 	if(token)
@@ -1837,7 +1838,7 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 		dprintf(INFO, "Attempt to write partition image.\n");
 		if (write_partition(sz, (unsigned char *) data)) {
 			fastboot_fail("failed to write partition");
-			return;
+			goto free_argcopy;
 		}
 	}
 	else
@@ -1846,13 +1847,13 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 		ptn = partition_get_offset(index);
 		if(ptn == 0) {
 			fastboot_fail("partition table doesn't exist");
-			return;
+			goto free_argcopy;
 		}
 
 		if (!strcmp(pname, "boot") || !strcmp(pname, "recovery")) {
 			if (memcmp((void *)data, BOOT_MAGIC, BOOT_MAGIC_SIZE)) {
 				fastboot_fail("image is not a boot image");
-				return;
+				goto free_argcopy;
 			}
 		}
 
@@ -1865,14 +1866,17 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 		size = partition_get_size(index);
 		if (ROUND_TO_PAGE(sz,511) > size) {
 			fastboot_fail("size too large");
-			return;
+			goto free_argcopy;
 		}
 		else if (mmc_write(ptn , sz, (unsigned int *)data)) {
 			fastboot_fail("flash write failure");
-			return;
+			goto free_argcopy;
 		}
 	}
 	fastboot_okay("");
+
+free_argcopy:
+	free(arg_copy);
 	return;
 }
 
@@ -1889,7 +1893,7 @@ void cmd_flash_mmc_sparse_img(const char *arg, void *data, unsigned sz)
 	unsigned long long ptn = 0;
 	unsigned long long size = 0;
 	int index = INVALID_PTN;
-	int i;
+	uint32_t i;
 	uint8_t lun = 0;
 
 	index = partition_get_index(arg);
@@ -2261,7 +2265,7 @@ void cmd_preflash(const char *arg, void *data, unsigned sz)
 	fastboot_okay("");
 }
 
-static struct fbimage logo_header = {0};
+static struct fbimage logo_header = {{{0},0,0,0,{0}}, 0};
 struct fbimage* splash_screen_flash();
 
 int splash_screen_check_header(struct fbimage *logo)
@@ -2639,7 +2643,7 @@ int aboot_save_boot_hash_mmc(void *kernel_addr, unsigned kernel_actual,
 		   unsigned dt_offset, unsigned dt_size)
 {
 	SHA256_CTX sha256_ctx;
-	char digest[32]={0};
+	unsigned char digest[32]={0};
 	char *buf = (char *)target_get_scratch_address();
 	unsigned dt_actual = ROUND_TO_PAGE(dt_size, page_mask);
 	unsigned imagesize_actual = page_size + kernel_actual + ramdisk_actual + dt_actual;

@@ -206,13 +206,6 @@
 #define DEBUG00		0x05A0	/* Debug */
 #define DEBUG01		0x05A4	/* LVDS Data */
 
-/* PWM */
-static u32 d2l_pwm_freq_hz = (3.921*1000);
-
-#define PWM_FREQ_HZ	(d2l_pwm_freq_hz)
-#define PWM_PERIOD_USEC (USEC_PER_SEC / PWM_FREQ_HZ)
-#define PWM_DUTY_LEVEL (PWM_PERIOD_USEC / PWM_LEVEL)
-
 #define CMD_DELAY 100
 #define DSI_MAX_LANES 4
 #define KHZ 1000
@@ -268,6 +261,11 @@ static u32 mipi_d2l_read_reg(u16 reg)
 
 	/* mutex had been acquired at mipi_dsi_on */
 	ret = mipi_dsi_cmds_tx(&mipi_cmd, 1);
+	if(ret) {
+		dprintf(CRITICAL, "%s: mipi_dsi_cmds_tx returned %d\n", __func__, ret);
+		return -1;
+	}
+
 	len = mipi_dsi_cmds_rx(&rp, len);
 
 	data = *(u32 *)buf;
