@@ -241,46 +241,46 @@ static int vcpio_rd(void** ptr, CPIO_OBJ * cpio_obj) {
 }
 
 // returns size of cpio binary
-int cpio_write(CPIO_OBJ (*cpio_obj)[], int num, void* destination, unsigned size) {
+int cpio_write(CPIO_OBJ* cpio_obj, int num, void* destination, unsigned size) {
 	int i, pad;
 	void* ptr = destination;
 
 	for(i=0; i<num; i++) {
 		// header
 		HD_VCPIO* hd = ptr;
-		if(ptr<(VCPIO_PAD(sizeof(HD_VCPIO)+(*cpio_obj)[i].namesize) + sizeof(HD_VCPIO)+(*cpio_obj)[i].namesize
-			+ VCPIO_PAD((*cpio_obj)[i].filesize) + (*cpio_obj)[i].data, (*cpio_obj)[i].filesize)) {
+		if(ptr<(VCPIO_PAD(sizeof(HD_VCPIO)+cpio_obj[i].namesize) + sizeof(HD_VCPIO)+cpio_obj[i].namesize
+			+ VCPIO_PAD(cpio_obj[i].filesize) + cpio_obj[i].data, cpio_obj[i].filesize)) {
 			printf("%s: buffer is too small!\n", __func__);
 		}
 
-		memcpy(ptr, (*cpio_obj)[i].hd, sizeof(HD_VCPIO));
+		memcpy(ptr, cpio_obj[i].hd, sizeof(HD_VCPIO));
 		ptr+=sizeof(HD_VCPIO);
 
 		// update sizes
-		if(ot_asc((*cpio_obj)[i].filesize, hd->c_filesize, sizeof(hd->c_filesize), HEX)) {
+		if(ot_asc(cpio_obj[i].filesize, hd->c_filesize, sizeof(hd->c_filesize), HEX)) {
 			printf("ERROR update filesize\n");
 			return -1;
 		}
-		if(ot_asc((*cpio_obj)[i].namesize, hd->c_namesize, sizeof(hd->c_namesize), HEX)) {
+		if(ot_asc(cpio_obj[i].namesize, hd->c_namesize, sizeof(hd->c_namesize), HEX)) {
 			printf("ERROR update namesize\n");
 			return -1;
 		}
 
 		// name
-		memcpy(ptr, (*cpio_obj)[i].name, (*cpio_obj)[i].namesize);
-		ptr+=(*cpio_obj)[i].namesize;
+		memcpy(ptr, cpio_obj[i].name, cpio_obj[i].namesize);
+		ptr+=cpio_obj[i].namesize;
 
 		// padding
-		pad = VCPIO_PAD(sizeof(HD_VCPIO) + (*cpio_obj)[i].namesize);
+		pad = VCPIO_PAD(sizeof(HD_VCPIO) + cpio_obj[i].namesize);
 		memset(ptr, 0, pad);
 		ptr+=pad;
 
 		// data
-		memcpy(ptr, (*cpio_obj)[i].data, (*cpio_obj)[i].filesize);
-		ptr+=(*cpio_obj)[i].filesize;
+		memcpy(ptr, cpio_obj[i].data, cpio_obj[i].filesize);
+		ptr+=cpio_obj[i].filesize;
 
 		// padding
-		pad = VCPIO_PAD((*cpio_obj)[i].filesize);
+		pad = VCPIO_PAD(cpio_obj[i].filesize);
 		memset(ptr, 0, pad);
 		ptr+=pad;
 	}
@@ -289,7 +289,7 @@ int cpio_write(CPIO_OBJ (*cpio_obj)[], int num, void* destination, unsigned size
 }
 
 // returns num of objects
-int cpio_load(void* ptr, CPIO_OBJ (*cpio_obj)[], unsigned long len) {
+int cpio_load(void* ptr, CPIO_OBJ* cpio_obj, unsigned long len) {
 	void* obj_ptr = ptr;
 	int count = 0;
 
@@ -297,12 +297,12 @@ int cpio_load(void* ptr, CPIO_OBJ (*cpio_obj)[], unsigned long len) {
 	while(obj_ptr<ptr+len) {
 		int i = count++;
 
-		if(vcpio_rd(&obj_ptr, &((*cpio_obj)[i]))) {
+		if(vcpio_rd(&obj_ptr, &(cpio_obj[i]))) {
 			printf("error parsing object! off=%lx\n", obj_ptr-ptr);
 			return -1;
 		}
 
-		if(strcmp((*cpio_obj)[i].name, TRAILER)==0)
+		if(strcmp(cpio_obj[i].name, TRAILER)==0)
 			break;
 	}
 
