@@ -38,7 +38,7 @@ typedef struct {
 #define VCPIO_PAD(x)	((4 - ((x) & 3)) & 3)	/* pad to next 4 byte word */
 #define TRAILER		"TRAILER!!!"	/* name in last archive record */
 
-int cpio_load(void* ptr, CPIO_OBJ (*cpio_obj)[], unsigned long len);
-int cpio_write(CPIO_OBJ (*cpio_obj)[], int num, void* destination, unsigned size);
+int cpio_load(void* ptr, CPIO_OBJ* cpio_obj, unsigned long len);
+int cpio_write(CPIO_OBJ* cpio_obj, int num, void* destination, unsigned size);
 
 #endif /* CPIO_H */
