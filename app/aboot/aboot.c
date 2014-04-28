@@ -78,6 +78,8 @@ void write_device_info_mmc(device_info *dev);
 void write_device_info_flash(device_info *dev);
 #if _DUALBOOT_ENABLED
 int read_dualboot_info_mmc(char *bootmode);
+static char syspart_value[16];
+static int read_syspart = 0;
 #endif
 
 #define EXPAND(NAME) #NAME
@@ -270,7 +272,6 @@ char *update_cmdline(const char * cmdline)
 	cmdline_len += strlen(sn_buf);
 
 #if _DUALBOOT_ENABLED
-	char* syspart_value = (char*)malloc(16*sizeof(char));
 	if(read_dualboot_info_mmc(syspart_value)) {
 		dprintf(CRITICAL,"ERROR: Error in read_dualboot_info_mmc!");
 		ASSERT(0);
@@ -825,7 +826,22 @@ int boot_linux_from_mmc(void)
 		goto unified_boot;
 	}
 	if (!boot_into_recovery) {
-		index = partition_get_index("boot");
+#if _DUALBOOT_ENABLED
+		if(read_dualboot_info_mmc(syspart_value)) {
+			dprintf(CRITICAL,"ERROR: Error in read_dualboot_info_mmc!");
+			ASSERT(0);
+		}
+
+		if(strcmp(syspart_value, "system1")==0) {
+			index = partition_get_index("boot1");
+			dprintf(INFO, "Booting from boot1.\n");
+		}
+		else
+#endif
+		{
+			index = partition_get_index("boot");
+		}
+
 		ptn = partition_get_offset(index);
 		if(ptn == 0) {
 			dprintf(CRITICAL, "ERROR: No boot partition found\n");
@@ -1545,6 +1561,8 @@ int read_dualboot_info_mmc(char *bootmode)
 	char data[size];
 	int index = INVALID_PTN;
 
+	if(read_syspart) return 0;
+
 	index = partition_get_index(ptn_name);
 	ptn = partition_get_offset(index);
 	if(ptn == 0) {
@@ -1562,6 +1580,7 @@ int read_dualboot_info_mmc(char *bootmode)
 		strncpy(data, "system", 16);
 
 	memcpy(bootmode, data, sizeof(*bootmode)*16);
+	read_syspart = 1;
 	return 0;
 }
 #endif
@@ -1852,7 +1871,7 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 			goto free_argcopy;
 		}
 
-		if (!strcmp(pname, "boot") || !strcmp(pname, "recovery")) {
+		if (!strcmp(pname, "boot") || !strcmp(pname, "recovery") || !strcmp(pname, "boot1")) {
 			if (memcmp((void *)data, BOOT_MAGIC, BOOT_MAGIC_SIZE)) {
 				fastboot_fail("image is not a boot image");
 				goto free_argcopy;
@@ -2154,7 +2173,7 @@ void cmd_flash(const char *arg, void *data, unsigned sz)
 		return;
 	}
 
-	if (!strcmp(ptn->name, "boot") || !strcmp(ptn->name, "recovery")) {
+	if (!strcmp(ptn->name, "boot") || !strcmp(ptn->name, "recovery") || !strcmp(ptn->name, "boot1")) {
 		if (memcmp((void *)data, BOOT_MAGIC, BOOT_MAGIC_SIZE)) {
 			fastboot_fail("image is not a boot image");
 			return;
