@@ -59,7 +59,6 @@ void target_fastboot_init(void);
 void target_load_ssd_keystore(void);
 bool target_is_ssd_enabled(void);
 void *target_mmc_device();
-uint32_t target_boot_device_emmc();
 
 bool target_display_panel_node(char *panel_name, char *pbuf,
 	uint16_t buf_size);
@@ -72,13 +71,6 @@ const char * target_usb_controller();
 void target_usb_phy_reset(void);
 void target_usb_phy_mux_configure(void);
 target_usb_iface_t * target_usb30_init();
-
-/* Boot device */
-enum boot_device
-{
-	BOOT_DEFAULT=0,
-	BOOT_EMMC=2,
-	BOOT_UFS=4,
-};
+bool target_is_cdp_qvga();
 
 #endif

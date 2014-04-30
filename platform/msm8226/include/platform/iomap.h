@@ -35,6 +35,9 @@
 #define SDRAM_START_ADDR            0x00000000
 
 #define MSM_SHARED_BASE             0x0FA00000
+#define MSM_DYNAMIC_SHARED_BASE     0xFE802FF8
+
+#define SMEM_TARGET_INFO_ADDR       0xFE802FF0
 
 #define APPS_SS_BASE                0xF9000000
 
@@ -169,6 +172,10 @@
 #define MIPI_DSI_BASE               (0xFD922800)
 #define MIPI_DSI0_BASE              MIPI_DSI_BASE
 #define MIPI_DSI1_BASE              MIPI_DSI_BASE
+#define DSI0_PHY_BASE               (0xFD922B00)
+#define DSI1_PHY_BASE               DSI0_PHY_BASE
+#define DSI0_PLL_BASE               (0xFD922A00)
+#define DSI1_PLL_BASE               DSI0_PLL_BASE
 #define REG_DSI(off)                (MIPI_DSI_BASE + 0x04 + (off))
 #define MDP_BASE                    (0xfd900000)
 #define REG_MDP(off)                (MDP_BASE + (off))

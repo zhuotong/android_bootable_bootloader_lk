@@ -48,8 +48,14 @@
 #include <scm.h>
 #include <stdlib.h>
 #include <partition_parser.h>
+
+#if LONG_PRESS_POWER_ON
 #include <shutdown_detect.h>
+#endif
+
+#if PON_VIB_SUPPORT
 #include <vibrator.h>
+#endif
 
 extern  bool target_use_signed_kernel(void);
 static void set_sdc_power_ctrl(void);
@@ -67,7 +73,10 @@ static void set_sdc_power_ctrl(void);
 #define CRYPTO_ENGINE_CMD_ARRAY_SIZE       20
 
 #define TLMM_VOL_UP_BTN_GPIO    106
+
+#if PON_VIB_SUPPORT
 #define VIBRATE_TIME    250
+#endif
 
 #define SSD_CE_INSTANCE         1
 
@@ -76,6 +85,11 @@ enum target_subtype {
 	HW_PLATFORM_SUBTYPE_SKUF = 2,
 	HW_PLATFORM_SUBTYPE_SKUAB = 3,
 	HW_PLATFORM_SUBTYPE_SKUG = 5,
+};
+
+enum mtp_cdp_subtype
+{
+	HW_PLATFORM_SUBTYPE_QVGA = 4,
 };
 
 static uint32_t mmc_pwrctl_base[] =
@@ -251,10 +265,14 @@ void target_init(void)
 
 	target_sdc_init();
 
+#if LONG_PRESS_POWER_ON
 	shutdown_detect();
+#endif
 
+#if PON_VIB_SUPPORT
 	/* turn on vibrator to indicate that phone is booting up to end user */
 	vib_timed_turn_on(VIBRATE_TIME);
+#endif
 
 	if (target_use_signed_kernel())
 		target_crypto_init_params();
@@ -278,6 +296,11 @@ void target_detect(struct board_data *board)
 	/*
 	* already fill the board->target on board.c
 	*/
+}
+
+bool target_is_cdp_qvga()
+{
+	return board_hardware_subtype() == HW_PLATFORM_SUBTYPE_QVGA;
 }
 
 /* Detect the modem type */
@@ -305,6 +328,8 @@ void target_baseband_detect(struct board_data *board)
 	case HW_PLATFORM_SUBTYPE_SKUAB:
 		break;
 	case HW_PLATFORM_SUBTYPE_SKUG:
+		break;
+	case HW_PLATFORM_SUBTYPE_QVGA:
 		break;
 	default:
 		dprintf(CRITICAL, "Platform Subtype : %u is not supported\n", platform_subtype);
@@ -413,8 +438,10 @@ void target_usb_stop(void)
 
 void target_uninit(void)
 {
+#if PON_VIB_SUPPORT
 	/* wait for the vibrator timer is expried */
 	wait_vib_timeout();
+#endif
 
 	mmc_put_card_to_sleep(dev);
 

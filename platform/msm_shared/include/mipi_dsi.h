@@ -298,6 +298,11 @@ struct mipi_dsi_phy_ctrl {
 	uint32_t pll[21];
 };
 
+enum dsi_reg_mode {
+	DSI_PHY_REGULATOR_DCDC_MODE,
+	DSI_PHY_REGULATOR_LDO_MODE,
+};
+
 struct mdss_dsi_phy_ctrl {
 	uint32_t regulator[7];
 	uint32_t timing[12];
@@ -305,6 +310,7 @@ struct mdss_dsi_phy_ctrl {
 	uint32_t strength[2];
 	char bistCtrl[6];
 	char laneCfg[45];
+	enum dsi_reg_mode regulator_mode;
 };
 
 struct mdss_dsi_pll_config {
@@ -314,6 +320,7 @@ struct mdss_dsi_pll_config {
 	uint32_t  bit_clock;
 	uint32_t  halfbit_clock;
 	uint32_t  vco_clock;
+	uint32_t  vco_delay;
 	uint8_t   directpath;
 	uint8_t   posdiv1;
 	uint8_t   posdiv3;
@@ -501,6 +508,8 @@ enum {		/* mipi dsi panel */
 
 int mipi_config(struct msm_fb_panel_data *panel);
 int mdss_dsi_config(struct msm_fb_panel_data *panel);
+int mdss_dsi_phy_init(struct mipi_dsi_panel_config *,
+		uint32_t ctl_base, uint32_t phy_base);
 
 int mdss_dsi_video_mode_config(uint16_t disp_width,
 	uint16_t disp_height,

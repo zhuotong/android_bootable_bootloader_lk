@@ -170,3 +170,231 @@ void clock_config_uart_dm(uint8_t id)
 		ASSERT(0);
 	}
 }
+
+/* Control the MDSS GDSC */
+void mdp_gdsc_ctrl(uint8_t enable)
+{
+	uint32_t reg = 0;
+	reg = readl(MDP_GDSCR);
+	if (enable) {
+		if (!(reg & GDSC_POWER_ON_BIT)) {
+			reg &=  ~(BIT(0) | GDSC_EN_FEW_WAIT_MASK);
+			reg |= GDSC_EN_FEW_WAIT_256_MASK;
+			writel(reg, MDP_GDSCR);
+			while(!(readl(MDP_GDSCR) & (GDSC_POWER_ON_BIT)));
+		} else {
+			dprintf(SPEW, "MDP GDSC already enabled\n");
+		}
+	} else {
+		reg |= BIT(0);
+		writel(reg, MDP_GDSCR);
+		while(readl(MDP_GDSCR) & (GDSC_POWER_ON_BIT));
+	}
+}
+
+/* Enable all the MDP branch clocks */
+void mdp_clock_enable(void)
+{
+	int ret;
+
+	ret = clk_get_set_enable("mdp_ahb_clk", 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set mdp_ahb_clk ret = %d\n", ret);
+		ASSERT(0);
+	}
+
+	/* Set MDP clock to 320MHz */
+	ret = clk_get_set_enable("mdss_mdp_clk_src", 320000000, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set mdp_clk_src ret = %d\n", ret);
+		ASSERT(0);
+	}
+
+	ret = clk_get_set_enable("mdss_vsync_clk", 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set mdss vsync clk ret = %d\n", ret);
+		ASSERT(0);
+	}
+
+	ret = clk_get_set_enable("mdss_mdp_clk", 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set mdp_clk ret = %d\n", ret);
+		ASSERT(0);
+	}
+}
+
+/* Disable all the MDP branch clocks */
+void mdp_clock_disable(void)
+{
+	clk_disable(clk_get("mdss_vsync_clk"));
+	clk_disable(clk_get("mdss_mdp_clk"));
+	clk_disable(clk_get("mdss_mdp_clk_src"));
+	clk_disable(clk_get("mdp_ahb_clk"));
+}
+
+/* Disable all the bus clocks needed by MDSS */
+void mdss_bus_clocks_disable(void)
+{
+	/* Disable MDSS AXI clock */
+	clk_disable(clk_get("mdss_axi_clk"));
+}
+
+/* Enable all the bus clocks needed by MDSS */
+void mdss_bus_clocks_enable(void)
+{
+	int ret;
+
+	/* Configure AXI clock */
+	ret = clk_get_set_enable("mdss_axi_clk", 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set mdss_axi_clk ret = %d\n", ret);
+		ASSERT(0);
+	}
+}
+
+/* Disable all the branch clocks needed by the DSI controller */
+void gcc_dsi_clocks_disable(void)
+{
+	clk_disable(clk_get("mdss_esc0_clk"));
+	writel(0x0, DSI_PIXEL0_CBCR);
+	writel(0x0, DSI_BYTE0_CBCR);
+}
+
+/* Configure all the branch clocks needed by the DSI controller */
+void gcc_dsi_clocks_enable(uint8_t pclk0_m, uint8_t pclk0_n, uint8_t pclk0_d)
+{
+	int ret;
+
+	/* Configure Byte clock -autopll- This will not change becasue
+	byte clock does not need any divider*/
+	writel(0x100, DSI_BYTE0_CFG_RCGR);
+	writel(0x1, DSI_BYTE0_CMD_RCGR);
+	writel(0x1, DSI_BYTE0_CBCR);
+
+	/* Configure Pixel clock */
+	writel(0x100, DSI_PIXEL0_CFG_RCGR);
+	writel(0x1, DSI_PIXEL0_CMD_RCGR);
+	writel(0x1, DSI_PIXEL0_CBCR);
+
+	writel(pclk0_m, DSI_PIXEL0_M);
+	writel(pclk0_n, DSI_PIXEL0_N);
+	writel(pclk0_d, DSI_PIXEL0_D);
+
+	/* Configure ESC clock */
+	ret = clk_get_set_enable("mdss_esc0_clk", 0, 1);
+	if (ret) {
+		dprintf(CRITICAL, "failed to set esc0_clk ret = %d\n", ret);
+		ASSERT(0);
+	}
+}
+
+/* Function to asynchronously reset CE.
+ * Function assumes that all the CE clocks are off.
+ */
+static void ce_async_reset(uint8_t instance)
+{
+	/* Start the block reset for CE */
+	writel(1, GCC_CRYPTO_BCR);
+
+	udelay(2);
+
+	/* Take CE block out of reset */
+	writel(0, GCC_CRYPTO_BCR);
+
+	udelay(2);
+}
+
+void clock_ce_enable(uint8_t instance)
+{
+	int ret;
+	char clk_name[64];
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_src_clk", instance);
+	ret = clk_get_set_enable(clk_name, 160000000, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set ce%u_src_clk ret = %d\n", instance, ret);
+		ASSERT(0);
+	}
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_core_clk", instance);
+	ret = clk_get_set_enable(clk_name, 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set ce%u_core_clk ret = %d\n", instance, ret);
+		ASSERT(0);
+	}
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_ahb_clk", instance);
+	ret = clk_get_set_enable(clk_name, 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set ce%u_ahb_clk ret = %d\n", instance, ret);
+		ASSERT(0);
+	}
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_axi_clk", instance);
+	ret = clk_get_set_enable(clk_name, 0, 1);
+	if(ret)
+	{
+		dprintf(CRITICAL, "failed to set ce%u_axi_clk ret = %d\n", instance, ret);
+		ASSERT(0);
+	}
+
+	/* Wait for 48 * #pipes cycles.
+	 * This is necessary as immediately after an access control reset (boot up)
+	 * or a debug re-enable, the Crypto core sequentially clears its internal
+	 * pipe key storage memory. If pipe key initialization writes are attempted
+	 * during this time, they may be overwritten by the internal clearing logic.
+	 */
+	udelay(1);
+}
+
+void clock_ce_disable(uint8_t instance)
+{
+	struct clk *ahb_clk;
+	struct clk *cclk;
+	struct clk *axi_clk;
+	struct clk *src_clk;
+	char clk_name[64];
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_src_clk", instance);
+	src_clk = clk_get(clk_name);
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_ahb_clk", instance);
+	ahb_clk = clk_get(clk_name);
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_axi_clk", instance);
+	axi_clk = clk_get(clk_name);
+
+	snprintf(clk_name, sizeof(clk_name), "ce%u_core_clk", instance);
+	cclk    = clk_get(clk_name);
+
+	clk_disable(ahb_clk);
+	clk_disable(axi_clk);
+	clk_disable(cclk);
+	clk_disable(src_clk);
+
+	/* Some delay for the clocks to stabalize. */
+	udelay(1);
+}
+
+void clock_config_ce(uint8_t instance)
+{
+	/* Need to enable the clock before disabling since the clk_disable()
+	 * has a check to default to nop when the clk_enable() is not called
+	 * on that particular clock.
+	 */
+	clock_ce_enable(instance);
+
+	clock_ce_disable(instance);
+
+	ce_async_reset(instance);
+
+	clock_ce_enable(instance);
+}

@@ -421,7 +421,7 @@ static uint32_t mipi_novatek_manufacture_id(void)
 #endif
 
 int mdss_dsi_host_init(struct mipi_dsi_panel_config *pinfo, uint32_t
-		broadcast)
+		dual_dsi, uint32_t broadcast)
 {
 #if (DISPLAY_TYPE_MDSS == 1)
 	uint8_t DMA_STREAM1 = 0;	// for mdp display processor path
@@ -455,7 +455,7 @@ int mdss_dsi_host_init(struct mipi_dsi_panel_config *pinfo, uint32_t
 	lane_swap = pinfo->lane_swap;
 	timing_ctl = ((pinfo->t_clk_post << 8) | pinfo->t_clk_pre);
 
-	if (broadcast) {
+	if (dual_dsi) {
 		writel(0x0001, MIPI_DSI1_BASE + SOFT_RESET);
 		writel(0x0000, MIPI_DSI1_BASE + SOFT_RESET);
 
@@ -1031,11 +1031,12 @@ int mdss_dsi_config(struct msm_fb_panel_data *panel)
 	mipi_pinfo.t_clk_post = pinfo->mipi.t_clk_post;
 	mipi_pinfo.signature = pinfo->mipi.signature;
 
-	mdss_dsi_phy_init(&mipi_pinfo, MIPI_DSI0_BASE);
+	mdss_dsi_phy_init(&mipi_pinfo, MIPI_DSI0_BASE, DSI0_PHY_BASE);
 	if (pinfo->mipi.dual_dsi)
-		mdss_dsi_phy_init(&mipi_pinfo, MIPI_DSI1_BASE);
+		mdss_dsi_phy_init(&mipi_pinfo, MIPI_DSI1_BASE, DSI1_PHY_BASE);
 
-	ret = mdss_dsi_host_init(&mipi_pinfo, pinfo->mipi.broadcast);
+	ret = mdss_dsi_host_init(&mipi_pinfo, pinfo->mipi.dual_dsi,
+						pinfo->mipi.broadcast);
 	if (ret) {
 		dprintf(CRITICAL, "dsi host init error\n");
 		goto error;
