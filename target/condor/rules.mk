@@ -45,4 +45,4 @@ OBJS += \
     $(LOCAL_DIR)/../msm8610/init.o \
     $(LOCAL_DIR)/../msm8610/meminfo.o \
     $(LOCAL_DIR)/../msm8610/target_display.o \
-    $(LOCAL_DIR)/../msm8610/oem_panel.o
+    $(LOCAL_DIR)/oem_panel.o
