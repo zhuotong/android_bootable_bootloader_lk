@@ -25,9 +25,15 @@
 
 #include <sys/types.h>
 #include <arch/arm/cores.h>
+#include <compiler.h>
 
 #if defined(__cplusplus)
 extern "C" {
+#endif
+
+#ifdef BOOT_2NDSTAGE
+extern void* atags_address;
+void set_atags_address(void* ptr) __EXTERNALLY_VISIBLE;
 #endif
 
 void arm_context_switch(vaddr_t *old_sp, vaddr_t new_sp);

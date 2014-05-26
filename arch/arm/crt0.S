@@ -37,6 +37,10 @@ _start:
 	b	arm_fiq
 
 reset:
+#ifdef BOOT_2NDSTAGE
+	/* backup atags */
+	mov r9, r2
+#endif
 
 #ifdef ENABLE_TRUSTZONE
 	/*Add reference to TZ symbol so linker includes it in final image */
@@ -170,6 +174,12 @@ warm_boot_tag:
 #ifdef ARM_CPU_CORTEX_A8
 	DSB
 	ISB
+#endif
+
+#ifdef BOOT_2NDSTAGE
+	/* set atags address */
+	mov r0, r9
+	bl set_atags_address
 #endif
 
 	bl		kmain

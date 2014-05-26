@@ -27,6 +27,14 @@
 #include <arch/arm/mmu.h>
 #include <platform.h>
 
+#ifdef BOOT_2NDSTAGE
+void* atags_address = 0;
+void set_atags_address(void* ptr)
+{
+	atags_address = ptr;
+}
+#endif
+
 #if ARM_CPU_CORTEX_A8
 static void set_vector_base(addr_t addr)
 {
