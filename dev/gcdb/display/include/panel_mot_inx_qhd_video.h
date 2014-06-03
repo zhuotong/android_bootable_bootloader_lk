@@ -54,7 +54,7 @@ static struct panel_config mot_inx_qhd_video_panel_data = {
 /* Panel resolution                                                          */
 /*---------------------------------------------------------------------------*/
 static struct panel_resolution mot_inx_qhd_video_panel_res = {
-  540, 960, 40, 42, 4, 0, 16, 17, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  540, 960, 41, 42, 4, 0, 16, 17, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 /*---------------------------------------------------------------------------*/
@@ -169,7 +169,7 @@ static struct videopanel_info mot_inx_qhd_video_video_panel = {
 /*---------------------------------------------------------------------------*/
 
 static struct lane_configuration mot_inx_qhd_video_lane_config = {
-  4, 1, 1, 1, 0, 0
+  2, 1, 1, 1, 0, 0
 };
 
 
