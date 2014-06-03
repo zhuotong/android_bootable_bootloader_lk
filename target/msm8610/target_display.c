@@ -103,6 +103,7 @@ int target_panel_clock(uint8_t enable, struct msm_panel_info *pinfo)
 int target_panel_reset(uint8_t enable, struct panel_reset_sequence *resetseq,
 						struct msm_panel_info *pinfo)
 {
+#if !TARGET_CONDOR
 	uint8_t i = 0;
 	dprintf(SPEW, "msm8610_mdss_mipi_panel_reset, enable = %d\n", enable);
 
@@ -132,6 +133,8 @@ int target_panel_reset(uint8_t enable, struct panel_reset_sequence *resetseq,
 		gpio_set(reset_gpio.pin_id, 0);
 		gpio_set(mode_gpio.pin_id, 0);
 	}
+#endif
+
 	return 0;
 }
 
