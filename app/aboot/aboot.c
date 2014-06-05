@@ -2480,6 +2480,16 @@ void aboot_fastboot_register_commands(void)
 			(const char *) panel_display_mode);
 }
 
+static void display_splash_screen(void)
+{
+	/* Display splash screen if enabled */
+#if DISPLAY_SPLASH_SCREEN
+	dprintf(SPEW, "Display Init: Start\n");
+	target_display_init(device.display_panel);
+	dprintf(SPEW, "Display Init: Done\n");
+#endif
+}
+
 void aboot_init(const struct app_descriptor *app)
 {
 	unsigned reboot_mode = 0;
@@ -2501,13 +2511,9 @@ void aboot_init(const struct app_descriptor *app)
 
 	read_device_info(&device);
 
-	/* Display splash screen if enabled */
-#if DISPLAY_SPLASH_SCREEN
-	dprintf(SPEW, "Display Init: Start\n");
-	target_display_init(device.display_panel);
-	dprintf(SPEW, "Display Init: Done\n");
+#if !BOOT_2NDSTAGE
+	display_splash_screen();
 #endif
-
 
 	target_serialno((unsigned char *) sn_buf);
 	dprintf(SPEW,"serial number: %s\n",sn_buf);
@@ -2583,6 +2589,10 @@ void aboot_init(const struct app_descriptor *app)
 	}
 
 	/* We are here means regular boot did not happen. Start fastboot. */
+
+#if BOOT_2NDSTAGE
+	display_splash_screen();
+#endif
 
 	/* register aboot specific fastboot commands */
 	aboot_fastboot_register_commands();
