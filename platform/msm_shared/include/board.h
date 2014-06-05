@@ -51,6 +51,14 @@ struct board_data {
 	struct board_pmic_data pmic_info[MAX_PMIC_DEVICES];
 };
 
+struct fdt_info {
+	char cmdline[2048];
+	uint32_t platform_id;
+	uint32_t variant_id;
+	uint32_t soc_rev;
+};
+
+struct fdt_info* board_get_old_fdt_info(void);
 void board_init();
 void target_detect(struct board_data *);
 void target_baseband_detect(struct board_data *);
