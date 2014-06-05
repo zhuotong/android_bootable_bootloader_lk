@@ -381,6 +381,9 @@ uint8_t target_panel_auto_detect_enabled()
 
 	switch(board_hardware_id())
 	{
+#if TARGET_CONDOR
+		case HW_PLATFORM_UNKNOWN:
+#endif
 		case HW_PLATFORM_MTP:
 		case HW_PLATFORM_SURF:
 		case HW_PLATFORM_QRD:
@@ -400,6 +403,9 @@ int target_cont_splash_screen()
 	if(!splash_override) {
 		switch(board_hardware_id())
 		{
+#if TARGET_CONDOR
+			case HW_PLATFORM_UNKNOWN:
+#endif
 			case HW_PLATFORM_QRD:
 			case HW_PLATFORM_MTP:
 			case HW_PLATFORM_SURF:
