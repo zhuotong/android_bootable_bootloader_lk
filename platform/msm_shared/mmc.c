@@ -45,6 +45,10 @@
 #include "mmc_dml.h"
 #endif
 
+#if USE_REVOLK
+#include <revolk.h>
+#endif
+
 #ifndef NULL
 #define NULL        0
 #endif
@@ -2481,6 +2485,12 @@ mmc_read(unsigned long long data_addr, unsigned int *out, unsigned int data_len)
 	int val = 0;
 	unsigned int data_limit = mmc_card.rd_block_len * 0xffff;
 	unsigned int this_len;
+
+#if USE_REVOLK
+	int hookret = 0;
+	if((hookret=revolk_partition_read(data_addr, out, data_len))<=0)
+		return hookret;
+#endif
 
 	do {
 		this_len = (data_len > data_limit) ? data_limit : data_len;

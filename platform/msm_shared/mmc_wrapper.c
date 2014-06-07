@@ -35,6 +35,10 @@
 #include <target.h>
 #include <string.h>
 
+#if USE_REVOLK
+#include <revolk.h>
+#endif
+
 /*
  * Weak function for UFS.
  * These are needed to avoid link errors for platforms which
@@ -176,6 +180,12 @@ uint32_t mmc_read(uint64_t data_addr, uint32_t *out, uint32_t data_len)
 	uint32_t read_size = SDHCI_ADMA_MAX_TRANS_SZ;
 	void *dev;
 	uint8_t *sptr = (uint8_t *)out;
+
+#if USE_REVOLK
+	int hookret = 0;
+	if((hookret=revolk_partition_read(data_addr, out, data_len))<=0)
+		return hookret;
+#endif
 
 	dev = target_mmc_device();
 	block_size = mmc_get_device_blocksize();

@@ -59,6 +59,10 @@
 #include <dev_tree.h>
 #endif
 
+#if USE_REVOLK
+#include <revolk.h>
+#endif
+
 #include "image_verify.h"
 #include "recovery.h"
 #include "bootimg.h"
@@ -2508,6 +2512,10 @@ void aboot_init(const struct app_descriptor *app)
 	}
 
 	ASSERT((MEMBASE + MEMSIZE) > MEMBASE);
+
+#if USE_REVOLK
+	revolk_init();
+#endif
 
 	read_device_info(&device);
 
