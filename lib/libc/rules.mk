@@ -8,7 +8,8 @@ OBJS += \
 	$(LOCAL_DIR)/printf.o \
 	$(LOCAL_DIR)/malloc.o \
 	$(LOCAL_DIR)/rand.o \
-	$(LOCAL_DIR)/eabi.o
+	$(LOCAL_DIR)/eabi.o \
+	$(LOCAL_DIR)/qsort.o
 
 
 include $(LOCAL_DIR)/string/rules.mk
